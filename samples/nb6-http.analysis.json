@@ -1,0 +1,1333 @@
+{
+  "capture_summary": {
+    "total_packets": 62,
+    "total_conversations": 5,
+    "total_bytes": 7793,
+    "total_bits": 62344,
+    "protocols": [
+      "DNS",
+      "HTTP",
+      "ICMP",
+      "TCP",
+      "UDP",
+      "UNKNOWN"
+    ],
+    "start_time": "2014-01-02T08:37:49.848747Z",
+    "end_time": "2014-01-02T08:38:06.615905Z",
+    "duration": 16.767158031463623
+  },
+  "conversations": [
+    {
+      "conversation_id": 3,
+      "ip_a": "109.6.1.72",
+      "ip_b": "95.136.242.99",
+      "ports": [
+        80,
+        1701,
+        37034
+      ],
+      "total_packets": 19,
+      "total_bytes": 2495,
+      "total_bits": 19960,
+      "protocols_used": [
+        "HTTP",
+        "ICMP",
+        "TCP",
+        "UDP"
+      ],
+      "start_time": "2014-01-02T08:37:53.716949Z",
+      "end_time": "2014-01-02T08:38:06.615905Z",
+      "duration": 12.898956060409546,
+      "packets": [
+        {
+          "packet_number": 19,
+          "timestamp": 1388651873.716949,
+          "timestamp_iso": "2014-01-02T08:37:53.716949Z",
+          "relative_time": 3.868202,
+          "src_ip": "109.6.1.72",
+          "dst_ip": "95.136.242.99",
+          "src_port": 1701,
+          "dst_port": 1701,
+          "protocol": "ICMP",
+          "length_bytes": 126,
+          "length_bits": 1008,
+          "default_port": false,
+          "tcp": null
+        },
+        {
+          "packet_number": 20,
+          "timestamp": 1388651873.957748,
+          "timestamp_iso": "2014-01-02T08:37:53.957748Z",
+          "relative_time": 4.109001,
+          "src_ip": "95.136.242.99",
+          "dst_ip": "109.6.1.72",
+          "src_port": 1701,
+          "dst_port": 1701,
+          "protocol": "UDP",
+          "length_bytes": 68,
+          "length_bits": 544,
+          "default_port": false,
+          "tcp": null
+        },
+        {
+          "packet_number": 21,
+          "timestamp": 1388651873.984,
+          "timestamp_iso": "2014-01-02T08:37:53.984000Z",
+          "relative_time": 4.135253,
+          "src_ip": "109.6.1.72",
+          "dst_ip": "95.136.242.99",
+          "src_port": 1701,
+          "dst_port": 1701,
+          "protocol": "UDP",
+          "length_bytes": 70,
+          "length_bits": 560,
+          "default_port": false,
+          "tcp": null
+        },
+        {
+          "packet_number": 22,
+          "timestamp": 1388651874.073759,
+          "timestamp_iso": "2014-01-02T08:37:54.073759Z",
+          "relative_time": 4.225012,
+          "src_ip": "95.136.242.99",
+          "dst_ip": "109.6.1.72",
+          "src_port": 1701,
+          "dst_port": 1701,
+          "protocol": "UDP",
+          "length_bytes": 70,
+          "length_bits": 560,
+          "default_port": false,
+          "tcp": null
+        },
+        {
+          "packet_number": 23,
+          "timestamp": 1388651874.098818,
+          "timestamp_iso": "2014-01-02T08:37:54.098818Z",
+          "relative_time": 4.250071,
+          "src_ip": "109.6.1.72",
+          "dst_ip": "95.136.242.99",
+          "src_port": 1701,
+          "dst_port": 1701,
+          "protocol": "UDP",
+          "length_bytes": 62,
+          "length_bits": 496,
+          "default_port": false,
+          "tcp": null
+        },
+        {
+          "packet_number": 24,
+          "timestamp": 1388651874.836963,
+          "timestamp_iso": "2014-01-02T08:37:54.836963Z",
+          "relative_time": 4.988216,
+          "src_ip": "109.6.1.72",
+          "dst_ip": "95.136.242.99",
+          "src_port": 1701,
+          "dst_port": 1701,
+          "protocol": "UDP",
+          "length_bytes": 74,
+          "length_bits": 592,
+          "default_port": false,
+          "tcp": null
+        },
+        {
+          "packet_number": 25,
+          "timestamp": 1388651874.837349,
+          "timestamp_iso": "2014-01-02T08:37:54.837349Z",
+          "relative_time": 4.988602,
+          "src_ip": "95.136.242.99",
+          "dst_ip": "109.6.1.72",
+          "src_port": 1701,
+          "dst_port": 1701,
+          "protocol": "UDP",
+          "length_bytes": 72,
+          "length_bits": 576,
+          "default_port": false,
+          "tcp": null
+        },
+        {
+          "packet_number": 47,
+          "timestamp": 1388651884.852778,
+          "timestamp_iso": "2014-01-02T08:38:04.852778Z",
+          "relative_time": 15.004031,
+          "src_ip": "109.6.1.72",
+          "dst_ip": "95.136.242.99",
+          "src_port": 1701,
+          "dst_port": 1701,
+          "protocol": "UDP",
+          "length_bytes": 74,
+          "length_bits": 592,
+          "default_port": false,
+          "tcp": null
+        },
+        {
+          "packet_number": 48,
+          "timestamp": 1388651884.853109,
+          "timestamp_iso": "2014-01-02T08:38:04.853109Z",
+          "relative_time": 15.004362,
+          "src_ip": "95.136.242.99",
+          "dst_ip": "109.6.1.72",
+          "src_port": 1701,
+          "dst_port": 1701,
+          "protocol": "UDP",
+          "length_bytes": 72,
+          "length_bits": 576,
+          "default_port": false,
+          "tcp": null
+        },
+        {
+          "packet_number": 53,
+          "timestamp": 1388651886.085868,
+          "timestamp_iso": "2014-01-02T08:38:06.085868Z",
+          "relative_time": 16.237121,
+          "src_ip": "95.136.242.99",
+          "dst_ip": "109.6.1.72",
+          "src_port": 37034,
+          "dst_port": 80,
+          "protocol": "TCP",
+          "length_bytes": 140,
+          "length_bits": 1120,
+          "default_port": false,
+          "tcp": {
+            "stream": 2,
+            "syn": true,
+            "ack": false,
+            "fin": false,
+            "rst": false,
+            "handshake": {
+              "syn_seen": true,
+              "syn_ack_seen": true,
+              "ack_seen": true,
+              "completed": true
+            }
+          }
+        },
+        {
+          "packet_number": 54,
+          "timestamp": 1388651886.256376,
+          "timestamp_iso": "2014-01-02T08:38:06.256376Z",
+          "relative_time": 16.407629,
+          "src_ip": "109.6.1.72",
+          "dst_ip": "95.136.242.99",
+          "src_port": 80,
+          "dst_port": 37034,
+          "protocol": "TCP",
+          "length_bytes": 142,
+          "length_bits": 1136,
+          "default_port": false,
+          "tcp": {
+            "stream": 2,
+            "syn": true,
+            "ack": true,
+            "fin": false,
+            "rst": false,
+            "handshake": {
+              "syn_seen": true,
+              "syn_ack_seen": true,
+              "ack_seen": true,
+              "completed": true
+            }
+          }
+        },
+        {
+          "packet_number": 55,
+          "timestamp": 1388651886.259672,
+          "timestamp_iso": "2014-01-02T08:38:06.259672Z",
+          "relative_time": 16.410925,
+          "src_ip": "95.136.242.99",
+          "dst_ip": "109.6.1.72",
+          "src_port": 37034,
+          "dst_port": 80,
+          "protocol": "TCP",
+          "length_bytes": 132,
+          "length_bits": 1056,
+          "default_port": false,
+          "tcp": {
+            "stream": 2,
+            "syn": false,
+            "ack": true,
+            "fin": false,
+            "rst": false,
+            "handshake": {
+              "syn_seen": true,
+              "syn_ack_seen": true,
+              "ack_seen": true,
+              "completed": true
+            }
+          }
+        },
+        {
+          "packet_number": 56,
+          "timestamp": 1388651886.259847,
+          "timestamp_iso": "2014-01-02T08:38:06.259847Z",
+          "relative_time": 16.4111,
+          "src_ip": "95.136.242.99",
+          "dst_ip": "109.6.1.72",
+          "src_port": 37034,
+          "dst_port": 80,
+          "protocol": "HTTP",
+          "length_bytes": 214,
+          "length_bits": 1712,
+          "default_port": true,
+          "tcp": {
+            "stream": 2,
+            "syn": false,
+            "ack": true,
+            "fin": false,
+            "rst": false,
+            "handshake": {
+              "syn_seen": true,
+              "syn_ack_seen": true,
+              "ack_seen": true,
+              "completed": true
+            }
+          }
+        },
+        {
+          "packet_number": 57,
+          "timestamp": 1388651886.432301,
+          "timestamp_iso": "2014-01-02T08:38:06.432301Z",
+          "relative_time": 16.583554,
+          "src_ip": "109.6.1.72",
+          "dst_ip": "95.136.242.99",
+          "src_port": 80,
+          "dst_port": 37034,
+          "protocol": "TCP",
+          "length_bytes": 134,
+          "length_bits": 1072,
+          "default_port": false,
+          "tcp": {
+            "stream": 2,
+            "syn": false,
+            "ack": true,
+            "fin": false,
+            "rst": false,
+            "handshake": {
+              "syn_seen": true,
+              "syn_ack_seen": true,
+              "ack_seen": true,
+              "completed": true
+            }
+          }
+        },
+        {
+          "packet_number": 58,
+          "timestamp": 1388651886.433289,
+          "timestamp_iso": "2014-01-02T08:38:06.433289Z",
+          "relative_time": 16.584542,
+          "src_ip": "109.6.1.72",
+          "dst_ip": "95.136.242.99",
+          "src_port": 80,
+          "dst_port": 37034,
+          "protocol": "HTTP",
+          "length_bytes": 515,
+          "length_bits": 4120,
+          "default_port": true,
+          "tcp": {
+            "stream": 2,
+            "syn": false,
+            "ack": true,
+            "fin": false,
+            "rst": false,
+            "handshake": {
+              "syn_seen": true,
+              "syn_ack_seen": true,
+              "ack_seen": true,
+              "completed": true
+            }
+          }
+        },
+        {
+          "packet_number": 59,
+          "timestamp": 1388651886.436255,
+          "timestamp_iso": "2014-01-02T08:38:06.436255Z",
+          "relative_time": 16.587508,
+          "src_ip": "95.136.242.99",
+          "dst_ip": "109.6.1.72",
+          "src_port": 37034,
+          "dst_port": 80,
+          "protocol": "TCP",
+          "length_bytes": 132,
+          "length_bits": 1056,
+          "default_port": false,
+          "tcp": {
+            "stream": 2,
+            "syn": false,
+            "ack": true,
+            "fin": false,
+            "rst": false,
+            "handshake": {
+              "syn_seen": true,
+              "syn_ack_seen": true,
+              "ack_seen": true,
+              "completed": true
+            }
+          }
+        },
+        {
+          "packet_number": 60,
+          "timestamp": 1388651886.43643,
+          "timestamp_iso": "2014-01-02T08:38:06.436430Z",
+          "relative_time": 16.587683,
+          "src_ip": "95.136.242.99",
+          "dst_ip": "109.6.1.72",
+          "src_port": 37034,
+          "dst_port": 80,
+          "protocol": "TCP",
+          "length_bytes": 132,
+          "length_bits": 1056,
+          "default_port": false,
+          "tcp": {
+            "stream": 2,
+            "syn": false,
+            "ack": true,
+            "fin": true,
+            "rst": false,
+            "handshake": {
+              "syn_seen": true,
+              "syn_ack_seen": true,
+              "ack_seen": true,
+              "completed": true
+            }
+          }
+        },
+        {
+          "packet_number": 61,
+          "timestamp": 1388651886.612155,
+          "timestamp_iso": "2014-01-02T08:38:06.612155Z",
+          "relative_time": 16.763408,
+          "src_ip": "109.6.1.72",
+          "dst_ip": "95.136.242.99",
+          "src_port": 80,
+          "dst_port": 37034,
+          "protocol": "TCP",
+          "length_bytes": 134,
+          "length_bits": 1072,
+          "default_port": false,
+          "tcp": {
+            "stream": 2,
+            "syn": false,
+            "ack": true,
+            "fin": true,
+            "rst": false,
+            "handshake": {
+              "syn_seen": true,
+              "syn_ack_seen": true,
+              "ack_seen": true,
+              "completed": true
+            }
+          }
+        },
+        {
+          "packet_number": 62,
+          "timestamp": 1388651886.615905,
+          "timestamp_iso": "2014-01-02T08:38:06.615905Z",
+          "relative_time": 16.767158,
+          "src_ip": "95.136.242.99",
+          "dst_ip": "109.6.1.72",
+          "src_port": 37034,
+          "dst_port": 80,
+          "protocol": "TCP",
+          "length_bytes": 132,
+          "length_bits": 1056,
+          "default_port": false,
+          "tcp": {
+            "stream": 2,
+            "syn": false,
+            "ack": true,
+            "fin": false,
+            "rst": false,
+            "handshake": {
+              "syn_seen": true,
+              "syn_ack_seen": true,
+              "ack_seen": true,
+              "completed": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "conversation_id": 2,
+      "ip_a": "10.251.23.139",
+      "ip_b": "93.17.156.250",
+      "ports": [
+        80,
+        33198
+      ],
+      "total_packets": 10,
+      "total_bytes": 1699,
+      "total_bits": 13592,
+      "protocols_used": [
+        "HTTP",
+        "TCP"
+      ],
+      "start_time": "2014-01-02T08:37:49.948771Z",
+      "end_time": "2014-01-02T08:37:50.037756Z",
+      "duration": 0.08898496627807617,
+      "packets": [
+        {
+          "packet_number": 7,
+          "timestamp": 1388651869.948771,
+          "timestamp_iso": "2014-01-02T08:37:49.948771Z",
+          "relative_time": 0.100024,
+          "src_ip": "10.251.23.139",
+          "dst_ip": "93.17.156.250",
+          "src_port": 33198,
+          "dst_port": 80,
+          "protocol": "TCP",
+          "length_bytes": 74,
+          "length_bits": 592,
+          "default_port": false,
+          "tcp": {
+            "stream": 0,
+            "syn": true,
+            "ack": false,
+            "fin": false,
+            "rst": false,
+            "handshake": {
+              "syn_seen": true,
+              "syn_ack_seen": true,
+              "ack_seen": true,
+              "completed": true
+            }
+          }
+        },
+        {
+          "packet_number": 8,
+          "timestamp": 1388651869.969745,
+          "timestamp_iso": "2014-01-02T08:37:49.969745Z",
+          "relative_time": 0.120998,
+          "src_ip": "93.17.156.250",
+          "dst_ip": "10.251.23.139",
+          "src_port": 80,
+          "dst_port": 33198,
+          "protocol": "TCP",
+          "length_bytes": 74,
+          "length_bits": 592,
+          "default_port": false,
+          "tcp": {
+            "stream": 0,
+            "syn": true,
+            "ack": true,
+            "fin": false,
+            "rst": false,
+            "handshake": {
+              "syn_seen": true,
+              "syn_ack_seen": true,
+              "ack_seen": true,
+              "completed": true
+            }
+          }
+        },
+        {
+          "packet_number": 9,
+          "timestamp": 1388651869.970012,
+          "timestamp_iso": "2014-01-02T08:37:49.970012Z",
+          "relative_time": 0.121265,
+          "src_ip": "10.251.23.139",
+          "dst_ip": "93.17.156.250",
+          "src_port": 33198,
+          "dst_port": 80,
+          "protocol": "TCP",
+          "length_bytes": 66,
+          "length_bits": 528,
+          "default_port": false,
+          "tcp": {
+            "stream": 0,
+            "syn": false,
+            "ack": true,
+            "fin": false,
+            "rst": false,
+            "handshake": {
+              "syn_seen": true,
+              "syn_ack_seen": true,
+              "ack_seen": true,
+              "completed": true
+            }
+          }
+        },
+        {
+          "packet_number": 10,
+          "timestamp": 1388651869.970634,
+          "timestamp_iso": "2014-01-02T08:37:49.970634Z",
+          "relative_time": 0.121887,
+          "src_ip": "10.251.23.139",
+          "dst_ip": "93.17.156.250",
+          "src_port": 33198,
+          "dst_port": 80,
+          "protocol": "HTTP",
+          "length_bytes": 204,
+          "length_bits": 1632,
+          "default_port": true,
+          "tcp": {
+            "stream": 0,
+            "syn": false,
+            "ack": true,
+            "fin": false,
+            "rst": false,
+            "handshake": {
+              "syn_seen": true,
+              "syn_ack_seen": true,
+              "ack_seen": true,
+              "completed": true
+            }
+          }
+        },
+        {
+          "packet_number": 11,
+          "timestamp": 1388651869.993891,
+          "timestamp_iso": "2014-01-02T08:37:49.993891Z",
+          "relative_time": 0.145144,
+          "src_ip": "93.17.156.250",
+          "dst_ip": "10.251.23.139",
+          "src_port": 80,
+          "dst_port": 33198,
+          "protocol": "TCP",
+          "length_bytes": 66,
+          "length_bits": 528,
+          "default_port": false,
+          "tcp": {
+            "stream": 0,
+            "syn": false,
+            "ack": true,
+            "fin": false,
+            "rst": false,
+            "handshake": {
+              "syn_seen": true,
+              "syn_ack_seen": true,
+              "ack_seen": true,
+              "completed": true
+            }
+          }
+        },
+        {
+          "packet_number": 12,
+          "timestamp": 1388651869.994873,
+          "timestamp_iso": "2014-01-02T08:37:49.994873Z",
+          "relative_time": 0.146126,
+          "src_ip": "93.17.156.250",
+          "dst_ip": "10.251.23.139",
+          "src_port": 80,
+          "dst_port": 33198,
+          "protocol": "HTTP",
+          "length_bytes": 951,
+          "length_bits": 7608,
+          "default_port": true,
+          "tcp": {
+            "stream": 0,
+            "syn": false,
+            "ack": true,
+            "fin": false,
+            "rst": false,
+            "handshake": {
+              "syn_seen": true,
+              "syn_ack_seen": true,
+              "ack_seen": true,
+              "completed": true
+            }
+          }
+        },
+        {
+          "packet_number": 13,
+          "timestamp": 1388651869.995058,
+          "timestamp_iso": "2014-01-02T08:37:49.995058Z",
+          "relative_time": 0.146311,
+          "src_ip": "10.251.23.139",
+          "dst_ip": "93.17.156.250",
+          "src_port": 33198,
+          "dst_port": 80,
+          "protocol": "TCP",
+          "length_bytes": 66,
+          "length_bits": 528,
+          "default_port": false,
+          "tcp": {
+            "stream": 0,
+            "syn": false,
+            "ack": true,
+            "fin": false,
+            "rst": false,
+            "handshake": {
+              "syn_seen": true,
+              "syn_ack_seen": true,
+              "ack_seen": true,
+              "completed": true
+            }
+          }
+        },
+        {
+          "packet_number": 14,
+          "timestamp": 1388651870.015674,
+          "timestamp_iso": "2014-01-02T08:37:50.015674Z",
+          "relative_time": 0.166927,
+          "src_ip": "10.251.23.139",
+          "dst_ip": "93.17.156.250",
+          "src_port": 33198,
+          "dst_port": 80,
+          "protocol": "TCP",
+          "length_bytes": 66,
+          "length_bits": 528,
+          "default_port": false,
+          "tcp": {
+            "stream": 0,
+            "syn": false,
+            "ack": true,
+            "fin": true,
+            "rst": false,
+            "handshake": {
+              "syn_seen": true,
+              "syn_ack_seen": true,
+              "ack_seen": true,
+              "completed": true
+            }
+          }
+        },
+        {
+          "packet_number": 15,
+          "timestamp": 1388651870.037499,
+          "timestamp_iso": "2014-01-02T08:37:50.037499Z",
+          "relative_time": 0.188752,
+          "src_ip": "93.17.156.250",
+          "dst_ip": "10.251.23.139",
+          "src_port": 80,
+          "dst_port": 33198,
+          "protocol": "TCP",
+          "length_bytes": 66,
+          "length_bits": 528,
+          "default_port": false,
+          "tcp": {
+            "stream": 0,
+            "syn": false,
+            "ack": true,
+            "fin": true,
+            "rst": false,
+            "handshake": {
+              "syn_seen": true,
+              "syn_ack_seen": true,
+              "ack_seen": true,
+              "completed": true
+            }
+          }
+        },
+        {
+          "packet_number": 16,
+          "timestamp": 1388651870.037756,
+          "timestamp_iso": "2014-01-02T08:37:50.037756Z",
+          "relative_time": 0.189009,
+          "src_ip": "10.251.23.139",
+          "dst_ip": "93.17.156.250",
+          "src_port": 33198,
+          "dst_port": 80,
+          "protocol": "TCP",
+          "length_bytes": 66,
+          "length_bits": 528,
+          "default_port": false,
+          "tcp": {
+            "stream": 0,
+            "syn": false,
+            "ack": true,
+            "fin": false,
+            "rst": false,
+            "handshake": {
+              "syn_seen": true,
+              "syn_ack_seen": true,
+              "ack_seen": true,
+              "completed": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "conversation_id": 5,
+      "ip_a": "216.69.252.100",
+      "ip_b": "95.136.242.99",
+      "ports": [
+        80,
+        52573
+      ],
+      "total_packets": 10,
+      "total_bytes": 1195,
+      "total_bits": 9560,
+      "protocols_used": [
+        "HTTP",
+        "TCP"
+      ],
+      "start_time": "2014-01-02T08:37:57.448122Z",
+      "end_time": "2014-01-02T08:37:57.908658Z",
+      "duration": 0.46053600311279297,
+      "packets": [
+        {
+          "packet_number": 35,
+          "timestamp": 1388651877.448122,
+          "timestamp_iso": "2014-01-02T08:37:57.448122Z",
+          "relative_time": 7.599375,
+          "src_ip": "95.136.242.99",
+          "dst_ip": "216.69.252.100",
+          "src_port": 52573,
+          "dst_port": 80,
+          "protocol": "TCP",
+          "length_bytes": 82,
+          "length_bits": 656,
+          "default_port": false,
+          "tcp": {
+            "stream": 1,
+            "syn": true,
+            "ack": false,
+            "fin": false,
+            "rst": false,
+            "handshake": {
+              "syn_seen": true,
+              "syn_ack_seen": true,
+              "ack_seen": true,
+              "completed": true
+            }
+          }
+        },
+        {
+          "packet_number": 36,
+          "timestamp": 1388651877.596412,
+          "timestamp_iso": "2014-01-02T08:37:57.596412Z",
+          "relative_time": 7.747665,
+          "src_ip": "216.69.252.100",
+          "dst_ip": "95.136.242.99",
+          "src_port": 80,
+          "dst_port": 52573,
+          "protocol": "TCP",
+          "length_bytes": 82,
+          "length_bits": 656,
+          "default_port": false,
+          "tcp": {
+            "stream": 1,
+            "syn": true,
+            "ack": true,
+            "fin": false,
+            "rst": false,
+            "handshake": {
+              "syn_seen": true,
+              "syn_ack_seen": true,
+              "ack_seen": true,
+              "completed": true
+            }
+          }
+        },
+        {
+          "packet_number": 37,
+          "timestamp": 1388651877.600676,
+          "timestamp_iso": "2014-01-02T08:37:57.600676Z",
+          "relative_time": 7.751929,
+          "src_ip": "95.136.242.99",
+          "dst_ip": "216.69.252.100",
+          "src_port": 52573,
+          "dst_port": 80,
+          "protocol": "TCP",
+          "length_bytes": 74,
+          "length_bits": 592,
+          "default_port": false,
+          "tcp": {
+            "stream": 1,
+            "syn": false,
+            "ack": true,
+            "fin": false,
+            "rst": false,
+            "handshake": {
+              "syn_seen": true,
+              "syn_ack_seen": true,
+              "ack_seen": true,
+              "completed": true
+            }
+          }
+        },
+        {
+          "packet_number": 38,
+          "timestamp": 1388651877.600764,
+          "timestamp_iso": "2014-01-02T08:37:57.600764Z",
+          "relative_time": 7.752017,
+          "src_ip": "95.136.242.99",
+          "dst_ip": "216.69.252.100",
+          "src_port": 52573,
+          "dst_port": 80,
+          "protocol": "HTTP",
+          "length_bytes": 156,
+          "length_bits": 1248,
+          "default_port": true,
+          "tcp": {
+            "stream": 1,
+            "syn": false,
+            "ack": true,
+            "fin": false,
+            "rst": false,
+            "handshake": {
+              "syn_seen": true,
+              "syn_ack_seen": true,
+              "ack_seen": true,
+              "completed": true
+            }
+          }
+        },
+        {
+          "packet_number": 39,
+          "timestamp": 1388651877.75088,
+          "timestamp_iso": "2014-01-02T08:37:57.750880Z",
+          "relative_time": 7.902133,
+          "src_ip": "216.69.252.100",
+          "dst_ip": "95.136.242.99",
+          "src_port": 80,
+          "dst_port": 52573,
+          "protocol": "TCP",
+          "length_bytes": 74,
+          "length_bits": 592,
+          "default_port": false,
+          "tcp": {
+            "stream": 1,
+            "syn": false,
+            "ack": true,
+            "fin": false,
+            "rst": false,
+            "handshake": {
+              "syn_seen": true,
+              "syn_ack_seen": true,
+              "ack_seen": true,
+              "completed": true
+            }
+          }
+        },
+        {
+          "packet_number": 40,
+          "timestamp": 1388651877.752364,
+          "timestamp_iso": "2014-01-02T08:37:57.752364Z",
+          "relative_time": 7.903617,
+          "src_ip": "216.69.252.100",
+          "dst_ip": "95.136.242.99",
+          "src_port": 80,
+          "dst_port": 52573,
+          "protocol": "HTTP",
+          "length_bytes": 431,
+          "length_bits": 3448,
+          "default_port": true,
+          "tcp": {
+            "stream": 1,
+            "syn": false,
+            "ack": true,
+            "fin": false,
+            "rst": false,
+            "handshake": {
+              "syn_seen": true,
+              "syn_ack_seen": true,
+              "ack_seen": true,
+              "completed": true
+            }
+          }
+        },
+        {
+          "packet_number": 41,
+          "timestamp": 1388651877.756259,
+          "timestamp_iso": "2014-01-02T08:37:57.756259Z",
+          "relative_time": 7.907512,
+          "src_ip": "95.136.242.99",
+          "dst_ip": "216.69.252.100",
+          "src_port": 52573,
+          "dst_port": 80,
+          "protocol": "TCP",
+          "length_bytes": 74,
+          "length_bits": 592,
+          "default_port": false,
+          "tcp": {
+            "stream": 1,
+            "syn": false,
+            "ack": true,
+            "fin": false,
+            "rst": false,
+            "handshake": {
+              "syn_seen": true,
+              "syn_ack_seen": true,
+              "ack_seen": true,
+              "completed": true
+            }
+          }
+        },
+        {
+          "packet_number": 42,
+          "timestamp": 1388651877.756346,
+          "timestamp_iso": "2014-01-02T08:37:57.756346Z",
+          "relative_time": 7.907599,
+          "src_ip": "95.136.242.99",
+          "dst_ip": "216.69.252.100",
+          "src_port": 52573,
+          "dst_port": 80,
+          "protocol": "TCP",
+          "length_bytes": 74,
+          "length_bits": 592,
+          "default_port": false,
+          "tcp": {
+            "stream": 1,
+            "syn": false,
+            "ack": true,
+            "fin": true,
+            "rst": false,
+            "handshake": {
+              "syn_seen": true,
+              "syn_ack_seen": true,
+              "ack_seen": true,
+              "completed": true
+            }
+          }
+        },
+        {
+          "packet_number": 43,
+          "timestamp": 1388651877.905149,
+          "timestamp_iso": "2014-01-02T08:37:57.905149Z",
+          "relative_time": 8.056402,
+          "src_ip": "216.69.252.100",
+          "dst_ip": "95.136.242.99",
+          "src_port": 80,
+          "dst_port": 52573,
+          "protocol": "TCP",
+          "length_bytes": 74,
+          "length_bits": 592,
+          "default_port": false,
+          "tcp": {
+            "stream": 1,
+            "syn": false,
+            "ack": true,
+            "fin": true,
+            "rst": false,
+            "handshake": {
+              "syn_seen": true,
+              "syn_ack_seen": true,
+              "ack_seen": true,
+              "completed": true
+            }
+          }
+        },
+        {
+          "packet_number": 44,
+          "timestamp": 1388651877.908658,
+          "timestamp_iso": "2014-01-02T08:37:57.908658Z",
+          "relative_time": 8.059911,
+          "src_ip": "95.136.242.99",
+          "dst_ip": "216.69.252.100",
+          "src_port": 52573,
+          "dst_port": 80,
+          "protocol": "TCP",
+          "length_bytes": 74,
+          "length_bits": 592,
+          "default_port": false,
+          "tcp": {
+            "stream": 1,
+            "syn": false,
+            "ack": true,
+            "fin": false,
+            "rst": false,
+            "handshake": {
+              "syn_seen": true,
+              "syn_ack_seen": true,
+              "ack_seen": true,
+              "completed": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "conversation_id": 1,
+      "ip_a": "109.0.66.10",
+      "ip_b": "95.136.242.99",
+      "ports": [
+        53,
+        32623,
+        37535,
+        54253,
+        60284
+      ],
+      "total_packets": 9,
+      "total_bytes": 1144,
+      "total_bits": 9152,
+      "protocols_used": [
+        "DNS"
+      ],
+      "start_time": "2014-01-02T08:37:49.848747Z",
+      "end_time": "2014-01-02T08:37:57.422720Z",
+      "duration": 7.573972940444946,
+      "packets": [
+        {
+          "packet_number": 1,
+          "timestamp": 1388651869.848747,
+          "timestamp_iso": "2014-01-02T08:37:49.848747Z",
+          "relative_time": 0.0,
+          "src_ip": "95.136.242.99",
+          "dst_ip": "109.0.66.10",
+          "src_port": 37535,
+          "dst_port": 53,
+          "protocol": "DNS",
+          "length_bytes": 95,
+          "length_bits": 760,
+          "default_port": true,
+          "tcp": null
+        },
+        {
+          "packet_number": 2,
+          "timestamp": 1388651869.881794,
+          "timestamp_iso": "2014-01-02T08:37:49.881794Z",
+          "relative_time": 0.033047,
+          "src_ip": "109.0.66.10",
+          "dst_ip": "95.136.242.99",
+          "src_port": 53,
+          "dst_port": 37535,
+          "protocol": "DNS",
+          "length_bytes": 193,
+          "length_bits": 1544,
+          "default_port": true,
+          "tcp": null
+        },
+        {
+          "packet_number": 3,
+          "timestamp": 1388651869.882392,
+          "timestamp_iso": "2014-01-02T08:37:49.882392Z",
+          "relative_time": 0.033645,
+          "src_ip": "95.136.242.99",
+          "dst_ip": "109.0.66.10",
+          "src_port": 60284,
+          "dst_port": 53,
+          "protocol": "DNS",
+          "length_bytes": 93,
+          "length_bits": 744,
+          "default_port": true,
+          "tcp": null
+        },
+        {
+          "packet_number": 4,
+          "timestamp": 1388651869.91481,
+          "timestamp_iso": "2014-01-02T08:37:49.914810Z",
+          "relative_time": 0.066063,
+          "src_ip": "109.0.66.10",
+          "dst_ip": "95.136.242.99",
+          "src_port": 53,
+          "dst_port": 60284,
+          "protocol": "DNS",
+          "length_bytes": 152,
+          "length_bits": 1216,
+          "default_port": true,
+          "tcp": null
+        },
+        {
+          "packet_number": 5,
+          "timestamp": 1388651869.915625,
+          "timestamp_iso": "2014-01-02T08:37:49.915625Z",
+          "relative_time": 0.066878,
+          "src_ip": "95.136.242.99",
+          "dst_ip": "109.0.66.10",
+          "src_port": 54253,
+          "dst_port": 53,
+          "protocol": "DNS",
+          "length_bytes": 95,
+          "length_bits": 760,
+          "default_port": true,
+          "tcp": null
+        },
+        {
+          "packet_number": 6,
+          "timestamp": 1388651869.94782,
+          "timestamp_iso": "2014-01-02T08:37:49.947820Z",
+          "relative_time": 0.099073,
+          "src_ip": "109.0.66.10",
+          "dst_ip": "95.136.242.99",
+          "src_port": 53,
+          "dst_port": 54253,
+          "protocol": "DNS",
+          "length_bytes": 166,
+          "length_bits": 1328,
+          "default_port": true,
+          "tcp": null
+        },
+        {
+          "packet_number": 27,
+          "timestamp": 1388651877.197452,
+          "timestamp_iso": "2014-01-02T08:37:57.197452Z",
+          "relative_time": 7.348705,
+          "src_ip": "95.136.242.99",
+          "dst_ip": "109.0.66.10",
+          "src_port": 32623,
+          "dst_port": 53,
+          "protocol": "DNS",
+          "length_bytes": 86,
+          "length_bits": 688,
+          "default_port": true,
+          "tcp": null
+        },
+        {
+          "packet_number": 33,
+          "timestamp": 1388651877.422462,
+          "timestamp_iso": "2014-01-02T08:37:57.422462Z",
+          "relative_time": 7.573715,
+          "src_ip": "109.0.66.10",
+          "dst_ip": "95.136.242.99",
+          "src_port": 53,
+          "dst_port": 32623,
+          "protocol": "DNS",
+          "length_bytes": 118,
+          "length_bits": 944,
+          "default_port": true,
+          "tcp": null
+        },
+        {
+          "packet_number": 34,
+          "timestamp": 1388651877.42272,
+          "timestamp_iso": "2014-01-02T08:37:57.422720Z",
+          "relative_time": 7.573973,
+          "src_ip": "95.136.242.99",
+          "dst_ip": "109.0.66.10",
+          "src_port": 53,
+          "dst_port": 32623,
+          "protocol": "DNS",
+          "length_bytes": 146,
+          "length_bits": 1168,
+          "default_port": true,
+          "tcp": null
+        }
+      ]
+    },
+    {
+      "conversation_id": 4,
+      "ip_a": "109.0.66.20",
+      "ip_b": "95.136.242.99",
+      "ports": [
+        53,
+        13326,
+        26148,
+        32623,
+        55434
+      ],
+      "total_packets": 8,
+      "total_bytes": 900,
+      "total_bits": 7200,
+      "protocols_used": [
+        "DNS"
+      ],
+      "start_time": "2014-01-02T08:37:57.197206Z",
+      "end_time": "2014-01-02T08:38:05.976244Z",
+      "duration": 8.779037952423096,
+      "packets": [
+        {
+          "packet_number": 26,
+          "timestamp": 1388651877.197206,
+          "timestamp_iso": "2014-01-02T08:37:57.197206Z",
+          "relative_time": 7.348459,
+          "src_ip": "95.136.242.99",
+          "dst_ip": "109.0.66.20",
+          "src_port": 32623,
+          "dst_port": 53,
+          "protocol": "DNS",
+          "length_bytes": 86,
+          "length_bits": 688,
+          "default_port": true,
+          "tcp": null
+        },
+        {
+          "packet_number": 28,
+          "timestamp": 1388651877.19795,
+          "timestamp_iso": "2014-01-02T08:37:57.197950Z",
+          "relative_time": 7.349203,
+          "src_ip": "95.136.242.99",
+          "dst_ip": "109.0.66.20",
+          "src_port": 55434,
+          "dst_port": 53,
+          "protocol": "DNS",
+          "length_bytes": 86,
+          "length_bits": 688,
+          "default_port": true,
+          "tcp": null
+        },
+        {
+          "packet_number": 31,
+          "timestamp": 1388651877.332802,
+          "timestamp_iso": "2014-01-02T08:37:57.332802Z",
+          "relative_time": 7.484055,
+          "src_ip": "109.0.66.20",
+          "dst_ip": "95.136.242.99",
+          "src_port": 53,
+          "dst_port": 55434,
+          "protocol": "DNS",
+          "length_bytes": 148,
+          "length_bits": 1184,
+          "default_port": true,
+          "tcp": null
+        },
+        {
+          "packet_number": 32,
+          "timestamp": 1388651877.351014,
+          "timestamp_iso": "2014-01-02T08:37:57.351014Z",
+          "relative_time": 7.502267,
+          "src_ip": "109.0.66.20",
+          "dst_ip": "95.136.242.99",
+          "src_port": 53,
+          "dst_port": 32623,
+          "protocol": "DNS",
+          "length_bytes": 118,
+          "length_bits": 944,
+          "default_port": true,
+          "tcp": null
+        },
+        {
+          "packet_number": 49,
+          "timestamp": 1388651885.834427,
+          "timestamp_iso": "2014-01-02T08:38:05.834427Z",
+          "relative_time": 15.98568,
+          "src_ip": "95.136.242.99",
+          "dst_ip": "109.0.66.20",
+          "src_port": 13326,
+          "dst_port": 53,
+          "protocol": "DNS",
+          "length_bytes": 86,
+          "length_bits": 688,
+          "default_port": true,
+          "tcp": null
+        },
+        {
+          "packet_number": 50,
+          "timestamp": 1388651885.834938,
+          "timestamp_iso": "2014-01-02T08:38:05.834938Z",
+          "relative_time": 15.986191,
+          "src_ip": "95.136.242.99",
+          "dst_ip": "109.0.66.20",
+          "src_port": 26148,
+          "dst_port": 53,
+          "protocol": "DNS",
+          "length_bytes": 86,
+          "length_bits": 688,
+          "default_port": true,
+          "tcp": null
+        },
+        {
+          "packet_number": 51,
+          "timestamp": 1388651885.959735,
+          "timestamp_iso": "2014-01-02T08:38:05.959735Z",
+          "relative_time": 16.110988,
+          "src_ip": "109.0.66.20",
+          "dst_ip": "95.136.242.99",
+          "src_port": 53,
+          "dst_port": 13326,
+          "protocol": "DNS",
+          "length_bytes": 148,
+          "length_bits": 1184,
+          "default_port": true,
+          "tcp": null
+        },
+        {
+          "packet_number": 52,
+          "timestamp": 1388651885.976244,
+          "timestamp_iso": "2014-01-02T08:38:05.976244Z",
+          "relative_time": 16.127497,
+          "src_ip": "109.0.66.20",
+          "dst_ip": "95.136.242.99",
+          "src_port": 53,
+          "dst_port": 26148,
+          "protocol": "DNS",
+          "length_bytes": 142,
+          "length_bits": 1136,
+          "default_port": true,
+          "tcp": null
+        }
+      ]
+    }
+  ]
+}
