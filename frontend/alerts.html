@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Alertes réseau</title>
+<style>
+  :root {
+    --bg: #0c1210;
+    --panel: #121a17;
+    --panel-raised: #17211d;
+    --border: #223029;
+    --text: #dbe7e0;
+    --text-muted: #7c9188;
+    --text-dim: #4d5f57;
+    --accent: #e8a33d;
+    --sev-critical: #e5484d;
+    --sev-suspicious: #e8a33d;
+    --sev-warning: #d9c04a;
+    --sev-info: #4fa8d8;
+    --mono: "IBM Plex Mono", "SF Mono", Consolas, monospace;
+    --radius: 3px;
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family:Inter,Segoe UI,sans-serif; background:var(--bg); color:var(--text); }
+  header { display:flex; justify-content:space-between; align-items:center; padding:18px 24px; border-bottom:1px solid var(--border); background:var(--panel); }
+  .nav { display:flex; gap:8px; flex-wrap:wrap; }
+  .nav a { color:var(--text-muted); text-decoration:none; padding:7px 10px; border:1px solid transparent; border-radius:999px; }
+  .nav a.active { color:var(--text); border-color:var(--border); background:var(--panel-raised); }
+  .container { max-width:1100px; margin:0 auto; padding:24px; }
+  .card { background:var(--panel); border:1px solid var(--border); border-radius:var(--radius); padding:16px; margin-bottom:16px; }
+  select { font:inherit; padding:8px 10px; border-radius:var(--radius); border:1px solid var(--border); background:var(--panel-raised); color:var(--text); width:100%; margin-top:8px; }
+  .alert-card { border:1px solid var(--border); background:var(--panel-raised); border-radius:var(--radius); padding:14px; margin-bottom:12px; }
+  .alert-head { display:flex; justify-content:space-between; gap:10px; align-items:flex-start; margin-bottom:8px; }
+  .alert-title { font-size:13px; font-weight:700; }
+  .alert-sub { font-family:var(--mono); font-size:11px; color:var(--text-muted); margin-top:4px; }
+  .badge { display:inline-block; padding:3px 8px; border-radius:999px; font-size:10px; font-family:var(--mono); text-transform:uppercase; }
+  .badge.CRITICAL { color:var(--sev-critical); background:rgba(229,72,77,0.12); }
+  .badge.SUSPICIOUS { color:var(--sev-suspicious); background:rgba(232,163,61,0.12); }
+  .badge.WARNING { color:var(--sev-warning); background:rgba(217,192,74,0.12); }
+  .badge.INFO { color:var(--sev-info); background:rgba(79,168,216,0.12); }
+  .detail-grid { display:grid; gap:8px; margin-top:10px; }
+  .detail-entry { border:1px solid var(--border); background:var(--panel); padding:9px 10px; border-radius:var(--radius); }
+  .detail-key { font-family:var(--mono); font-size:10.5px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px; }
+  .detail-value { font-size:12px; color:var(--text); white-space:pre-wrap; }
+  .empty { color:var(--text-dim); padding:16px 0; }
+</style>
+</head>
+<body>
+<header>
+  <strong>Alertes réseau</strong>
+  <div class="nav">
+    <a href="index.html">Accueil</a>
+    <a href="conversations.html">Conversations</a>
+    <a class="active" href="alerts.html">Alertes</a>
+  </div>
+</header>
+<div class="container">
+  <div class="card">
+    <label for="analysisSelect">Analyse</label>
+    <select id="analysisSelect"></select>
+  </div>
+  <div id="content"></div>
+</div>
+<script>
+const API_BASE = "http://127.0.0.1:8000";
+
+async function loadAnalyses() {
+  const select = document.getElementById("analysisSelect");
+  try {
+    const res = await fetch(`${API_BASE}/analyses`);
+    if (!res.ok) throw new Error();
+    const analyses = await res.json();
+    select.innerHTML = analyses.map(a => `<option value="${a.id}">${a.filename}</option>`).join("");
+    if (analyses[0]) {
+      await renderAnalysis(analyses[0].id);
+    }
+  } catch {
+    document.getElementById("content").innerHTML = '<div class="empty">Impossible de charger les analyses. Vérifiez que l’API est en cours d’exécution.</div>';
+  }
+}
+
+async function renderAnalysis(id) {
+  const content = document.getElementById("content");
+  try {
+    const res = await fetch(`${API_BASE}/analyses/${id}`);
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    const alerts = data.alerts || [];
+    content.innerHTML = `
+      <div class="card">
+        <h3>${escapeHtml(data.filename)}</h3>
+        <div class="alert-sub">${escapeHtml(data.id)}</div>
+      </div>
+      ${alerts.length === 0 ? '<div class="empty">Aucune alerte disponible.</div>' : alerts.map(alert => `
+        <div class="alert-card">
+          <div class="alert-head">
+            <div>
+              <div class="alert-title">${escapeHtml(alert.rule_id || "Alerte")}</div>
+              <div class="alert-sub">${escapeHtml(alert.protocole || "—")} · ${escapeHtml(alert.cible || "—")} · ${escapeHtml(alert.timestamp || "—")}</div>
+            </div>
+            <span class="badge ${escapeHtml(alert.severite || "INFO")}">${escapeHtml(alert.severite || "INFO")}</span>
+          </div>
+          <div class="detail-value">${escapeHtml(alert.description || "Aucune description fournie.")}</div>
+          <div class="detail-grid">${renderDetails(alert.details)}</div>
+        </div>
+      `).join("")}
+    `;
+  } catch {
+    content.innerHTML = '<div class="empty">Impossible de charger les détails d’alerte.</div>';
+  }
+}
+
+function renderDetails(details) {
+  if (!details || typeof details !== "object") return '<div class="detail-entry"><div class="detail-value">Aucun détail supplémentaire.</div></div>';
+  return Object.entries(details).map(([key, value]) => `
+    <div class="detail-entry">
+      <div class="detail-key">${escapeHtml(key)}</div>
+      <div class="detail-value">${escapeHtml(typeof value === "object" ? JSON.stringify(value, null, 2) : String(value))}</div>
+    </div>
+  `).join("");
+}
+
+function escapeHtml(str) {
+  const div = document.createElement("div");
+  div.textContent = str ?? "";
+  return div.innerHTML;
+}
+
+document.getElementById("analysisSelect").addEventListener("change", (e) => renderAnalysis(e.target.value));
+loadAnalyses();
+</script>
+</body>
+</html>
