@@ -1,0 +1,359 @@
+{
+  "capture_summary": {
+    "total_packets": 8,
+    "total_conversations": 2,
+    "total_bytes": 526,
+    "total_bits": 4208,
+    "protocols": [
+      "DNS",
+      "FTP",
+      "HTTP",
+      "SSH",
+      "TCP"
+    ],
+    "start_time": "2023-11-14T22:13:20Z",
+    "end_time": "2023-11-14T22:13:28Z",
+    "duration": 8.0
+  },
+  "detection_summary": {
+    "total_alerts": 4,
+    "alerts_by_severity": {
+      "SUSPICIOUS": 1,
+      "WARNING": 3
+    }
+  },
+  "alerts": [
+    {
+      "rule_id": "tcp_incomplete_handshake",
+      "protocole": "TCP",
+      "cible": "192.168.1.20",
+      "severite": "SUSPICIOUS",
+      "description": "3/3 handshake(s) TCP incomplet(s) (100%) entre 10.0.0.30 et 192.168.1.20",
+      "details": {
+        "incomplete_streams": [
+          0,
+          1,
+          2
+        ],
+        "total_streams": 3,
+        "ratio": 1.0
+      },
+      "conversation_id": 1,
+      "packet_number": null,
+      "timestamp": "2026-07-16T17:53:14.928947+00:00"
+    },
+    {
+      "rule_id": "port_protocol_mismatch",
+      "protocole": "MULTI",
+      "cible": "192.168.1.20:9090",
+      "severite": "WARNING",
+      "description": "HTTP détecté sur port non standard : 10.0.0.30:51000 -> 192.168.1.20:9090",
+      "details": {
+        "detected_protocol": "HTTP",
+        "src_port": 51000,
+        "dst_port": 9090
+      },
+      "conversation_id": 1,
+      "packet_number": 1,
+      "timestamp": "2026-07-16T17:53:14.929784+00:00"
+    },
+    {
+      "rule_id": "port_protocol_mismatch",
+      "protocole": "MULTI",
+      "cible": "192.168.1.20:2222",
+      "severite": "WARNING",
+      "description": "SSH détecté sur port non standard : 10.0.0.30:51001 -> 192.168.1.20:2222",
+      "details": {
+        "detected_protocol": "SSH",
+        "src_port": 51001,
+        "dst_port": 2222
+      },
+      "conversation_id": 1,
+      "packet_number": 2,
+      "timestamp": "2026-07-16T17:53:14.929849+00:00"
+    },
+    {
+      "rule_id": "port_protocol_mismatch",
+      "protocole": "MULTI",
+      "cible": "192.168.1.20:5353",
+      "severite": "WARNING",
+      "description": "DNS détecté sur port non standard : 10.0.0.30:51003 -> 192.168.1.20:5353",
+      "details": {
+        "detected_protocol": "DNS",
+        "src_port": 51003,
+        "dst_port": 5353
+      },
+      "conversation_id": 1,
+      "packet_number": 4,
+      "timestamp": "2026-07-16T17:53:14.929887+00:00"
+    }
+  ],
+  "conversations": [
+    {
+      "conversation_id": 1,
+      "ip_a": "10.0.0.30",
+      "ip_b": "192.168.1.20",
+      "ports": [
+        2121,
+        2222,
+        5353,
+        9090,
+        51000,
+        51001,
+        51002,
+        51003
+      ],
+      "total_packets": 4,
+      "total_bytes": 263,
+      "total_bits": 2104,
+      "protocols_used": [
+        "DNS",
+        "HTTP",
+        "SSH",
+        "TCP"
+      ],
+      "start_time": "2023-11-14T22:13:20Z",
+      "end_time": "2023-11-14T22:13:23Z",
+      "duration": 3.0,
+      "packets": [
+        {
+          "packet_number": 1,
+          "timestamp": 1700000000.0,
+          "timestamp_iso": "2023-11-14T22:13:20Z",
+          "relative_time": 0.0,
+          "src_ip": "10.0.0.30",
+          "dst_ip": "192.168.1.20",
+          "src_port": 51000,
+          "dst_port": 9090,
+          "protocol": "HTTP",
+          "length_bytes": 83,
+          "length_bits": 664,
+          "default_port": false,
+          "dhcp_message_type": null,
+          "client_mac": null,
+          "tcp": {
+            "stream": 0,
+            "syn": false,
+            "ack": true,
+            "fin": false,
+            "rst": false,
+            "handshake": {
+              "syn_seen": false,
+              "syn_ack_seen": false,
+              "ack_seen": false,
+              "completed": false
+            }
+          }
+        },
+        {
+          "packet_number": 2,
+          "timestamp": 1700000001.0,
+          "timestamp_iso": "2023-11-14T22:13:21Z",
+          "relative_time": 1.0,
+          "src_ip": "10.0.0.30",
+          "dst_ip": "192.168.1.20",
+          "src_port": 51001,
+          "dst_port": 2222,
+          "protocol": "SSH",
+          "length_bytes": 61,
+          "length_bits": 488,
+          "default_port": false,
+          "dhcp_message_type": null,
+          "client_mac": null,
+          "tcp": {
+            "stream": 1,
+            "syn": false,
+            "ack": true,
+            "fin": false,
+            "rst": false,
+            "handshake": {
+              "syn_seen": false,
+              "syn_ack_seen": false,
+              "ack_seen": false,
+              "completed": false
+            }
+          }
+        },
+        {
+          "packet_number": 3,
+          "timestamp": 1700000002.0,
+          "timestamp_iso": "2023-11-14T22:13:22Z",
+          "relative_time": 2.0,
+          "src_ip": "10.0.0.30",
+          "dst_ip": "192.168.1.20",
+          "src_port": 51002,
+          "dst_port": 2121,
+          "protocol": "TCP",
+          "length_bytes": 62,
+          "length_bits": 496,
+          "default_port": false,
+          "dhcp_message_type": null,
+          "client_mac": null,
+          "tcp": {
+            "stream": 2,
+            "syn": false,
+            "ack": true,
+            "fin": false,
+            "rst": false,
+            "handshake": {
+              "syn_seen": false,
+              "syn_ack_seen": false,
+              "ack_seen": false,
+              "completed": false
+            }
+          }
+        },
+        {
+          "packet_number": 4,
+          "timestamp": 1700000003.0,
+          "timestamp_iso": "2023-11-14T22:13:23Z",
+          "relative_time": 3.0,
+          "src_ip": "10.0.0.30",
+          "dst_ip": "192.168.1.20",
+          "src_port": 51003,
+          "dst_port": 5353,
+          "protocol": "DNS",
+          "length_bytes": 57,
+          "length_bits": 456,
+          "default_port": false,
+          "dhcp_message_type": null,
+          "client_mac": null,
+          "tcp": null
+        }
+      ]
+    },
+    {
+      "conversation_id": 2,
+      "ip_a": "10.0.0.40",
+      "ip_b": "192.168.1.20",
+      "ports": [
+        21,
+        22,
+        53,
+        80,
+        52000,
+        52001,
+        52002,
+        52003
+      ],
+      "total_packets": 4,
+      "total_bytes": 263,
+      "total_bits": 2104,
+      "protocols_used": [
+        "DNS",
+        "FTP",
+        "HTTP",
+        "SSH"
+      ],
+      "start_time": "2023-11-14T22:13:25Z",
+      "end_time": "2023-11-14T22:13:28Z",
+      "duration": 3.0,
+      "packets": [
+        {
+          "packet_number": 5,
+          "timestamp": 1700000005.0,
+          "timestamp_iso": "2023-11-14T22:13:25Z",
+          "relative_time": 5.0,
+          "src_ip": "10.0.0.40",
+          "dst_ip": "192.168.1.20",
+          "src_port": 52000,
+          "dst_port": 80,
+          "protocol": "HTTP",
+          "length_bytes": 83,
+          "length_bits": 664,
+          "default_port": true,
+          "dhcp_message_type": null,
+          "client_mac": null,
+          "tcp": {
+            "stream": 3,
+            "syn": false,
+            "ack": true,
+            "fin": false,
+            "rst": false,
+            "handshake": {
+              "syn_seen": false,
+              "syn_ack_seen": false,
+              "ack_seen": false,
+              "completed": false
+            }
+          }
+        },
+        {
+          "packet_number": 6,
+          "timestamp": 1700000006.0,
+          "timestamp_iso": "2023-11-14T22:13:26Z",
+          "relative_time": 6.0,
+          "src_ip": "10.0.0.40",
+          "dst_ip": "192.168.1.20",
+          "src_port": 52001,
+          "dst_port": 22,
+          "protocol": "SSH",
+          "length_bytes": 61,
+          "length_bits": 488,
+          "default_port": true,
+          "dhcp_message_type": null,
+          "client_mac": null,
+          "tcp": {
+            "stream": 4,
+            "syn": false,
+            "ack": true,
+            "fin": false,
+            "rst": false,
+            "handshake": {
+              "syn_seen": false,
+              "syn_ack_seen": false,
+              "ack_seen": false,
+              "completed": false
+            }
+          }
+        },
+        {
+          "packet_number": 7,
+          "timestamp": 1700000007.0,
+          "timestamp_iso": "2023-11-14T22:13:27Z",
+          "relative_time": 7.0,
+          "src_ip": "10.0.0.40",
+          "dst_ip": "192.168.1.20",
+          "src_port": 52002,
+          "dst_port": 21,
+          "protocol": "FTP",
+          "length_bytes": 62,
+          "length_bits": 496,
+          "default_port": true,
+          "dhcp_message_type": null,
+          "client_mac": null,
+          "tcp": {
+            "stream": 5,
+            "syn": false,
+            "ack": true,
+            "fin": false,
+            "rst": false,
+            "handshake": {
+              "syn_seen": false,
+              "syn_ack_seen": false,
+              "ack_seen": false,
+              "completed": false
+            }
+          }
+        },
+        {
+          "packet_number": 8,
+          "timestamp": 1700000008.0,
+          "timestamp_iso": "2023-11-14T22:13:28Z",
+          "relative_time": 8.0,
+          "src_ip": "10.0.0.40",
+          "dst_ip": "192.168.1.20",
+          "src_port": 52003,
+          "dst_port": 53,
+          "protocol": "DNS",
+          "length_bytes": 57,
+          "length_bits": 456,
+          "default_port": true,
+          "dhcp_message_type": null,
+          "client_mac": null,
+          "tcp": null
+        }
+      ]
+    }
+  ]
+}

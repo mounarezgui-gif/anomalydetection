@@ -73,6 +73,7 @@ TSHARK_FIELDS: Final[list[str]] = [
 DEFAULT_PORTS: Final[dict[str, set[int]]] = {
     "HTTP": {80},
     "HTTPS": {443},
+    "QUIC": {443},
     "DNS": {53},
     "DHCP": {67, 68},
     "SSH": {22},
@@ -85,23 +86,27 @@ TCP_FLAG_SYN: Final[int] = 0x0002
 TCP_FLAG_RST: Final[int] = 0x0004
 TCP_FLAG_ACK: Final[int] = 0x0010
 
-# Keywords found in frame.protocols used to detect the application
-# protocol. Order matters: more specific / application-layer protocols
-# are checked before falling back to generic transport-layer protocols.
-_PROTOCOL_KEYWORD_MAP: Final[list[tuple[str, str]]] = [
-    ("http2", "HTTP"),
-    ("http", "HTTP"),
-    ("tls", "HTTPS"),
-    ("ssl", "HTTPS"),
-    ("dns", "DNS"),
-    ("dhcp", "DHCP"),
-    ("bootp", "DHCP"),
-    ("ssh", "SSH"),
-    ("ftp-data", "FTP"),
-    ("ftp", "FTP"),
-    ("icmpv6", "ICMP"),
-    ("icmp", "ICMP"),
-]
+# Segments of frame.protocols that are transport/network layers only, not
+# an application protocol. If the highest (last) layer in the stack is one
+# of these, it means TShark did not recognize any application protocol on
+# top of it, so we fall back to the transport-layer protocol (TCP/UDP).
+_TRANSPORT_ONLY_LAYERS: Final[set[str]] = {
+    "eth", "ethertype", "ip", "ipv6", "tcp", "udp", "data", "vlan",
+}
+
+# Optional renaming for TShark's raw layer names, so the output stays
+# consistent with names used elsewhere in the pipeline (HTTPS instead of
+# TLS/SSL, HTTP instead of HTTP2, etc.). Anything not listed here just
+# gets its TShark name uppercased (e.g. "quic" -> "QUIC", "ntp" -> "NTP").
+_PROTOCOL_NAME_OVERRIDES: Final[dict[str, str]] = {
+    "http2": "HTTP",
+    "http": "HTTP",
+    "tls": "HTTPS",
+    "ssl": "HTTPS",
+    "bootp": "DHCP",
+    "ftp-data": "FTP",
+    "icmpv6": "ICMP",
+}
 
 DHCP_MESSAGE_TYPES: Final[dict[int, str]] = {
     1: "DISCOVER",
@@ -162,15 +167,20 @@ def _parse_tcp_flags(raw_flags: str) -> int:
 
 def _detect_protocol(frame_protocols: Optional[str], transport: Optional[str]) -> str:
     """
-    Determine the application-layer protocol from the frame.protocols
-    stack string. Falls back to the transport-layer protocol (TCP/UDP)
-    when no application protocol is recognized.
+    Determine the application-layer protocol from the last layer in the
+    frame.protocols stack (e.g. "eth:ethertype:ip:udp:quic" -> "QUIC").
+
+    Falls back to the transport-layer protocol (TCP/UDP) when the highest
+    layer found is itself transport/network-only (no app protocol was
+    recognized by TShark), and to "UNKNOWN" when nothing could be
+    determined at all.
     """
     if frame_protocols:
-        stack = frame_protocols.lower()
-        for keyword, protocol_name in _PROTOCOL_KEYWORD_MAP:
-            if keyword in stack:
-                return protocol_name
+        layers = frame_protocols.lower().split(":")
+        if layers:
+            highest = layers[-1].strip()
+            if highest and highest not in _TRANSPORT_ONLY_LAYERS:
+                return _PROTOCOL_NAME_OVERRIDES.get(highest, highest.upper())
 
     if transport:
         return transport
