@@ -87,6 +87,12 @@
     letter-spacing: -0.01em;
   }
 
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+
   .api-status {
     display: flex; align-items: center; gap: 8px;
     font-family: var(--mono);
@@ -96,6 +102,45 @@
   .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text-dim); }
   .dot.ok { background: #4bb679; box-shadow: 0 0 6px 1px #4bb67955; }
   .dot.down { background: var(--sev-critical); box-shadow: 0 0 6px 1px #e5484d55; }
+
+  .user-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12.5px;
+  }
+  .user-bar .user-name { color: var(--text-muted); }
+  .user-bar .role-pill {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 2px 7px;
+    border-radius: 999px;
+    color: var(--accent);
+    background: rgba(232,163,61,0.12);
+    border: 1px solid rgba(232,163,61,0.3);
+  }
+  .user-bar a.admin-link {
+    font-size: 12px;
+    color: var(--accent);
+    text-decoration: none;
+    border: 1px solid var(--accent-dim);
+    border-radius: var(--radius);
+    padding: 5px 10px;
+  }
+  .user-bar a.admin-link:hover { border-color: var(--accent); }
+  .user-bar button.logout-btn {
+    font-family: var(--sans);
+    font-size: 12px;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-muted);
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+  .user-bar button.logout-btn:hover { border-color: var(--text-dim); color: var(--text); }
 
   /* ---------- Layout ---------- */
   .layout {
@@ -569,6 +614,12 @@
 </head>
 <body>
 
+<!-- Protection : bloque l'accès et redirige vers login.html si pas connecté -->
+<script src="js/auth.js"></script>
+<script>
+  const currentUser = requireAuth();
+</script>
+
 <header>
   <div class="brand">
     <div class="radar"></div>
@@ -577,9 +628,12 @@
       <h1>Console d'anomalies réseau</h1>
     </div>
   </div>
-  <div class="api-status">
-    <span class="dot" id="apiDot"></span>
-    <span id="apiStatusText">connexion...</span>
+  <div class="header-right">
+    <div class="api-status">
+      <span class="dot" id="apiDot"></span>
+      <span id="apiStatusText">connexion...</span>
+    </div>
+    <div class="user-bar" id="userBar"></div>
   </div>
 </header>
 
@@ -622,6 +676,19 @@ let currentId = null;
 let currentAnalysisData = null;
 let currentDetailView = "overview";
 
+// ---- Barre utilisateur (nom, rôle, lien admin, déconnexion) ----
+function renderUserBar() {
+  const bar = document.getElementById("userBar");
+  if (!currentUser) return;
+  bar.innerHTML = `
+    <span class="user-name">${escapeHtml(currentUser.nom)}</span>
+    <span class="role-pill">${escapeHtml(currentUser.role)}</span>
+    ${currentUser.role === "admin" ? '<a class="admin-link" href="admin.html">Espace admin</a>' : ""}
+    <button class="logout-btn" id="logoutBtn">Déconnexion</button>
+  `;
+  document.getElementById("logoutBtn").addEventListener("click", logout);
+}
+
 function toast(message, isError = false) {
   const el = document.getElementById("toast");
   el.textContent = message;
@@ -645,8 +712,7 @@ async function checkApiHealth() {
   const dot = document.getElementById("apiDot");
   const text = document.getElementById("apiStatusText");
   try {
-    const res = await fetch(`${API_BASE}/analyses`);
-    if (!res.ok) throw new Error();
+    await apiFetch("/analyses");
     dot.className = "dot ok";
     text.textContent = "API connectée";
     return true;
@@ -660,9 +726,7 @@ async function checkApiHealth() {
 async function loadAnalysisList() {
   const list = document.getElementById("analysisList");
   try {
-    const res = await fetch(`${API_BASE}/analyses`);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const analyses = await res.json();
+    const analyses = await apiFetch("/analyses");
 
     if (analyses.length === 0) {
       list.innerHTML = `<div class="list-eyebrow">Analyses</div>
@@ -706,9 +770,7 @@ async function openAnalysis(id) {
   main.innerHTML = `<div class="placeholder"><div class="radar"></div><p>Chargement de l'analyse...</p></div>`;
 
   try {
-    const res = await fetch(`${API_BASE}/analyses/${id}`);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
+    const data = await apiFetch(`/analyses/${id}`);
     renderDetail(data);
   } catch (err) {
     main.innerHTML = `<div class="placeholder"><p>Impossible de charger cette analyse (${err.message}).</p></div>`;
@@ -909,8 +971,7 @@ function renderDetail(data) {
 async function deleteAnalysis(id) {
   if (!confirm("Supprimer définitivement cette analyse ?")) return;
   try {
-    const res = await fetch(`${API_BASE}/analyses/${id}`, { method: "DELETE" });
-    if (res.status !== 204) throw new Error(`HTTP ${res.status}`);
+    await apiFetch(`/analyses/${id}`, { method: "DELETE" });
     toast("Analyse supprimée.");
     currentId = null;
     currentAnalysisData = null;
@@ -937,7 +998,12 @@ async function uploadFile(file) {
   formData.append("file", file);
 
   try {
-    const res = await fetch(`${API_BASE}/analyses`, { method: "POST", body: formData });
+    const token = getToken();
+    const res = await fetch(`${API_BASE}/analyses`, {
+      method: "POST",
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      body: formData,
+    });
     const body = await res.json();
     if (!res.ok) throw new Error(body.detail || `HTTP ${res.status}`);
     toast(`${body.detection_summary.total_alerts} alerte(s) détectée(s) dans ${file.name}.`);
@@ -971,6 +1037,7 @@ uploadZone.addEventListener("drop", e => {
 });
 
 // --- Init ---
+renderUserBar();
 checkApiHealth();
 loadAnalysisList();
 setInterval(checkApiHealth, 15000);
