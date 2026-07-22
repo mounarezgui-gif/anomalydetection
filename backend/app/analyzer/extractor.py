@@ -64,8 +64,17 @@ TSHARK_FIELDS: Final[list[str]] = [
     "udp.dstport",
     "tcp.flags",
     "tcp.stream",
-    "dhcp.option.dhcp",   # <- nouveau : type de message DHCP (1=DISCOVER...8=INFORM)
-    "eth.src",             # <- nouveau : MAC source, pour distinguer les clients
+    "dhcp.option.dhcp",
+    "eth.src",
+    "dns.flags.response",
+    "dns.qry.name",
+    "ftp.response.code",
+    "ftp.request.command",
+    "http.request.method",
+    "http.response.code",
+    "tls.handshake.type",
+    "tls.alert_message.level",
+    "tls.record.content_type",
 ]
 
 # Standard / well-known ports for the application protocols we detect.
@@ -95,14 +104,16 @@ _TRANSPORT_ONLY_LAYERS: Final[set[str]] = {
 }
 
 # Optional renaming for TShark's raw layer names, so the output stays
-# consistent with names used elsewhere in the pipeline (HTTPS instead of
-# TLS/SSL, HTTP instead of HTTP2, etc.). Anything not listed here just
-# gets its TShark name uppercased (e.g. "quic" -> "QUIC", "ntp" -> "NTP").
+# consistent with names used elsewhere in the pipeline (HTTP instead of
+# HTTP2, etc.). "tls"/"ssl" are mapped to the generic "TLS" here (not
+# "HTTPS" directly): TLS wraps many application protocols (MongoDB,
+# IMAPS, LDAPS...), not just the web, so the real protocol is resolved
+# afterwards from the port via _resolve_tls_protocol().
 _PROTOCOL_NAME_OVERRIDES: Final[dict[str, str]] = {
     "http2": "HTTP",
     "http": "HTTP",
-    "tls": "HTTPS",
-    "ssl": "HTTPS",
+    "tls": "TLS",
+    "ssl": "TLS",
     "bootp": "DHCP",
     "ftp-data": "FTP",
     "icmpv6": "ICMP",
@@ -118,6 +129,37 @@ DHCP_MESSAGE_TYPES: Final[dict[int, str]] = {
     7: "RELEASE",
     8: "INFORM",
 }
+
+# Ports connus derrière lesquels une couche TLS générique cache un
+# protocole applicatif précis. Utilisé pour ne pas confondre "TLS" avec
+# "HTTPS" par défaut (voir _resolve_tls_protocol).
+_TLS_WRAPPED_PROTOCOLS: Final[dict[int, str]] = {
+    443: "HTTPS",
+    8443: "HTTPS",
+    27017: "MONGODB_TLS",
+    993: "IMAPS",
+    995: "POP3S",
+    465: "SMTPS",
+    587: "SMTPS",
+    636: "LDAPS",
+}
+
+TLS_HANDSHAKE_TYPES: Final[dict[int, str]] = {
+    1: "client_hello",
+    2: "server_hello",
+    11: "certificate",
+    12: "server_key_exchange",
+    14: "server_hello_done",
+    16: "client_key_exchange",
+}
+
+TLS_CONTENT_TYPES: Final[dict[int, str]] = {
+    20: "change_cipher_spec",
+    21: "alert",
+    22: "handshake",
+    23: "application_data",
+}
+
 # --------------------------------------------------------------------------
 # Helpers
 # --------------------------------------------------------------------------
@@ -188,6 +230,18 @@ def _detect_protocol(frame_protocols: Optional[str], transport: Optional[str]) -
     return "UNKNOWN"
 
 
+def _resolve_tls_protocol(src_port: Optional[int], dst_port: Optional[int]) -> str:
+    """
+    Identifie le protocole applicatif réel derrière une couche TLS
+    générique, à partir du port connu, plutôt que de supposer HTTPS par
+    défaut (TLS est aussi utilisé par MongoDB, IMAPS, LDAPS, etc.).
+    """
+    for port in (src_port, dst_port):
+        if port in _TLS_WRAPPED_PROTOCOLS:
+            return _TLS_WRAPPED_PROTOCOLS[port]
+    return "TLS"  # protocole chiffré non identifié, générique
+
+
 def _is_default_port(protocol: str, src_port: Optional[int], dst_port: Optional[int]) -> bool:
     """Return True if either port matches the well-known port(s) for the protocol."""
     standard_ports = DEFAULT_PORTS.get(protocol)
@@ -213,8 +267,17 @@ class _RawFields:
     udp_dstport: str
     tcp_flags: str
     tcp_stream: str
-    dhcp_type: str      # <- nouveau
-    eth_src: str        # <- nouveau
+    dhcp_type: str
+    eth_src: str
+    dns_is_response: str
+    dns_qname: str
+    ftp_response_code: str
+    ftp_request_command: str
+    http_method: str
+    http_status_code: str
+    tls_handshake_type: str
+    tls_alert_level: str
+    tls_content_type: str
 
 
 def _split_line(line: str) -> Optional[_RawFields]:
@@ -347,6 +410,13 @@ def _build_packet(raw: _RawFields) -> Optional[dict]:
 
     transport = "TCP" if is_tcp else ("UDP" if is_udp else None)
     protocol = _detect_protocol(frame_protocols, transport)
+
+    # Si TShark a détecté une couche TLS générique, on résout le vrai
+    # protocole applicatif (HTTPS, MongoDB, IMAPS...) à partir du port,
+    # plutôt que de supposer HTTPS par défaut.
+    if protocol == "TLS":
+        protocol = _resolve_tls_protocol(src_port, dst_port)
+
     default_port = _is_default_port(protocol, src_port, dst_port)
 
     tcp_info: Optional[dict] = None
@@ -363,9 +433,54 @@ def _build_packet(raw: _RawFields) -> Optional[dict]:
             # cross-packet view of the whole tcp.stream and is computed
             # later by aggregator.py.
         }
+
     dhcp_type_code = _safe_int(raw.dhcp_type)
     dhcp_message_type = DHCP_MESSAGE_TYPES.get(dhcp_type_code) if dhcp_type_code is not None else None
     client_mac = _safe_str(raw.eth_src)
+
+    # --- DNS ---
+    dns_is_response = _safe_str(raw.dns_is_response)
+    dns_qname = _safe_str(raw.dns_qname)
+    dns_info: Optional[dict] = None
+    if protocol == "DNS":
+        dns_info = {
+            "is_query": dns_is_response == "0",
+            "is_response": dns_is_response == "1",
+            "qname": dns_qname,
+        }
+
+    # --- FTP ---
+    ftp_response_code = _safe_int(raw.ftp_response_code)
+    ftp_command = _safe_str(raw.ftp_request_command)
+    ftp_info: Optional[dict] = None
+    if protocol == "FTP":
+        ftp_info = {
+            "is_response": ftp_response_code is not None,
+            "response_code": ftp_response_code,
+            "command": ftp_command,
+        }
+
+    # --- HTTP ---
+    http_method = _safe_str(raw.http_method)
+    http_status = _safe_int(raw.http_status_code)
+    http_info: Optional[dict] = None
+    if protocol == "HTTP":
+        http_info = {
+            "method": http_method,
+            "status_code": http_status,
+        }
+
+    # --- TLS / HTTPS ---
+    tls_handshake_code = _safe_int(raw.tls_handshake_type)
+    tls_content_code = _safe_int(raw.tls_content_type)
+    tls_info: Optional[dict] = None
+    if protocol in ("HTTPS", "MONGODB_TLS", "IMAPS", "POP3S", "SMTPS", "LDAPS", "TLS"):
+        tls_info = {
+            "handshake_type": TLS_HANDSHAKE_TYPES.get(tls_handshake_code),
+            "alert": _safe_str(raw.tls_alert_level) is not None,
+            "content_type": TLS_CONTENT_TYPES.get(tls_content_code),
+        }
+
     return {
         "packet_number": frame_number,
         "timestamp": time_epoch,
@@ -379,8 +494,12 @@ def _build_packet(raw: _RawFields) -> Optional[dict]:
         "length_bytes": length_bytes,
         "length_bits": length_bytes * 8,
         "default_port": default_port,
-        "dhcp_message_type": dhcp_message_type,   # <- nouveau
-        "client_mac": client_mac,                  # <- nouveau
+        "dhcp_message_type": dhcp_message_type,
+        "client_mac": client_mac,
+        "dns": dns_info,
+        "ftp": ftp_info,
+        "http": http_info,
+        "tls": tls_info,
         "tcp": tcp_info,
     }
 

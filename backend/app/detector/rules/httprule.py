@@ -9,8 +9,11 @@ Règles comportementales HTTP :
 
 Suppose que extractor.py attache `packet["http"]` du type :
     {"method": "GET"|"POST"|..., "status_code": int|None}
-(cf. la note du projet : détection basée sur http_method/http_status_code
-plutôt que sur highest_layer, déjà validée côté extraction).
+pour le trafic identifié avec protocol == "HTTP".
+
+Le serveur/la cible sont déterminés à partir des src_ip/dst_ip réels des
+paquets, jamais depuis ip_a/ip_b de la conversation (sans direction
+garantie).
 """
 
 from __future__ import annotations
@@ -22,17 +25,37 @@ from .common import Rule, Severity, Alert
 HTTP_FLOOD_MIN_REQUESTS = 100
 HTTP_FLOOD_MIN_RPS = 20.0
 POST_HEAVY_MIN_REQUESTS = 30
-POST_HEAVY_MIN_RATIO = 0.8          # part de POST jugée suspecte (ex. bruteforce/exfil)
+POST_HEAVY_MIN_RATIO = 0.8
 ERROR_RATE_MIN_RESPONSES = 20
-ERROR_RATE_MIN_RATIO = 0.3          # part de 4xx/5xx jugée anormale
+ERROR_RATE_MIN_RATIO = 0.3
 
 
 def _http_requests(conversation: dict) -> list[dict]:
-    return [p for p in conversation.get("packets", []) if p.get("http") and p["http"].get("method")]
+    return [
+        p for p in conversation.get("packets", [])
+        if p.get("protocol") == "HTTP" and p.get("http") and p["http"].get("method")
+    ]
 
 
 def _http_responses(conversation: dict) -> list[dict]:
-    return [p for p in conversation.get("packets", []) if p.get("http") and p["http"].get("status_code")]
+    return [
+        p for p in conversation.get("packets", [])
+        if p.get("protocol") == "HTTP" and p.get("http") and p["http"].get("status_code")
+    ]
+
+
+def _identify_server(packets: list[dict]) -> str | None:
+    """
+    Pour des requêtes : le serveur est la destination majoritaire.
+    Pour des réponses : le serveur est la source majoritaire.
+    On combine les deux pour couvrir les deux cas d'usage du fichier.
+    """
+    counts: dict[str, int] = {}
+    for p in packets:
+        for ip in (p.get("dst_ip"), p.get("src_ip")):
+            if ip:
+                counts[ip] = counts.get(ip, 0) + 1
+    return max(counts, key=counts.get) if counts else None
 
 
 class HttpFloodRule(Rule):
@@ -53,13 +76,15 @@ class HttpFloodRule(Rule):
         if rps < HTTP_FLOOD_MIN_RPS:
             return []
 
+        server = _identify_server(requests)
         severity = Severity.CRITICAL if rps >= HTTP_FLOOD_MIN_RPS * 3 else Severity.HIGH
         return [self._alert(
             conversation,
             f"HTTP flood suspecté : {rps:.1f} requêtes/s ({len(requests)} requêtes) "
-            f"vers {conversation.get('ip_b')}",
+            f"vers {server}",
             severity,
             evidence={"request_count": len(requests), "rps": round(rps, 2)},
+            cible=server,
         )]
 
 
@@ -83,12 +108,14 @@ class HttpMethodDistributionRule(Rule):
         if ratio < POST_HEAVY_MIN_RATIO:
             return []
 
+        server = _identify_server(requests)
         return [self._alert(
             conversation,
             f"Rafale de requêtes POST suspecte : {post_count}/{len(requests)} "
-            f"({ratio:.0%}) vers {conversation.get('ip_b')}",
+            f"({ratio:.0%}) vers {server}",
             Severity.MEDIUM,
             evidence={"methods": dict(methods), "post_ratio": round(ratio, 2)},
+            cible=server,
         )]
 
 
@@ -107,14 +134,16 @@ class HttpErrorRateRule(Rule):
         if ratio < ERROR_RATE_MIN_RATIO:
             return []
 
+        server = _identify_server(responses)
         status_counts = Counter(p["http"]["status_code"] for p in errors)
         severity = Severity.HIGH if ratio >= 0.6 else Severity.MEDIUM
         return [self._alert(
             conversation,
             f"Taux d'erreurs HTTP anormal : {len(errors)}/{len(responses)} "
-            f"({ratio:.0%}) réponses 4xx/5xx depuis {conversation.get('ip_b')}",
+            f"({ratio:.0%}) réponses 4xx/5xx depuis {server}",
             severity,
             evidence={"error_ratio": round(ratio, 2), "status_codes": dict(status_counts)},
+            cible=server,
         )]
 
 

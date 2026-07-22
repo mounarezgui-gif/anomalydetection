@@ -161,6 +161,8 @@ def _format_packet(packet: dict) -> dict:
         "default_port": packet["default_port"],
         "dhcp_message_type": packet.get("dhcp_message_type"),  # <- nouveau
         "client_mac": packet.get("client_mac"),                  # <- nouveau
+        "dns": packet.get("dns"),   # <- AJOUT
+        "ftp": packet.get("ftp"),   # <- AJOUT
         "tcp": packet["tcp"],  # None for non-TCP packets
     }
 

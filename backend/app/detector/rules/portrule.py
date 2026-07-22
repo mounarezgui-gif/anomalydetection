@@ -13,6 +13,11 @@ Les protocoles sans port standard connu (TCP/UDP génériques, ICMP...)
 ne sont jamais concernés : leur "protocol" n'a pas d'entrée dans
 extractor.DEFAULT_PORTS, donc default_port vaut toujours False pour eux
 et ne doit pas déclencher d'alerte.
+
+Les IPs affichées dans le message proviennent du paquet lui-même
+(src_ip/dst_ip), jamais de conversation.ip_a/ip_b : ces derniers n'ont
+pas de sens directionnel garanti (assignés arbitrairement par
+aggregator.py) et peuvent inverser client et serveur dans le message.
 """
 
 from __future__ import annotations
@@ -48,7 +53,9 @@ class PortProtocolMismatchRule(Rule):
 
             sport = p.get("src_port")
             dport = p.get("dst_port")
-            if sport is None or dport is None:
+            src_ip = p.get("src_ip")
+            dst_ip = p.get("dst_ip")
+            if sport is None or dport is None or src_ip is None or dst_ip is None:
                 continue
 
             key = (proto, sport, dport)
@@ -59,14 +66,14 @@ class PortProtocolMismatchRule(Rule):
             alerts.append(self._alert(
                 conversation,
                 f"{proto} détecté sur port non standard : "
-                f"{conversation.get('ip_a')}:{sport} -> {conversation.get('ip_b')}:{dport}",
+                f"{src_ip}:{sport} -> {dst_ip}:{dport}",
                 Severity.MEDIUM,
                 evidence={
                     "detected_protocol": proto,
                     "src_port": sport,
                     "dst_port": dport,
                 },
-                cible=f"{conversation.get('ip_b')}:{dport}",
+                cible=f"{dst_ip}:{dport}",
                 packet_number=p.get("packet_number"),
             ))
 

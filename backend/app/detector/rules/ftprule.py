@@ -8,7 +8,7 @@ Règles comportementales FTP :
 
 Suppose que extractor.py attache `packet["ftp"]` du type :
     {"is_response": bool, "response_code": int|None, "command": str|None}
-pour le trafic identifié sur le port de contrôle FTP (21).
+pour le trafic identifié avec protocol == "FTP".
 """
 
 from __future__ import annotations
@@ -23,10 +23,29 @@ FTP_FAILURE_MIN_RATIO = 0.5
 def _ftp_streams(conversation: dict) -> set[int]:
     streams: set[int] = set()
     for p in conversation.get("packets", []):
-        if p.get("ftp") and p.get("tcp") and p["tcp"].get("stream") is not None:
+        if p.get("protocol") == "FTP" and p.get("tcp") and p["tcp"].get("stream") is not None:
             if p.get("dst_port") == 21 or p.get("src_port") == 21:
                 streams.add(p["tcp"]["stream"])
     return streams
+
+
+def _identify_client_and_server(responses: list[dict]) -> tuple[str | None, str | None]:
+    """
+    Les réponses FTP (codes 4xx/5xx) sont envoyées par le serveur vers le
+    client -> le serveur est la source majoritaire, le client (celui qui
+    échoue à se connecter) est la destination majoritaire de ces réponses.
+    """
+    src_counts: dict[str, int] = {}
+    dst_counts: dict[str, int] = {}
+    for p in responses:
+        if p.get("src_ip"):
+            src_counts[p["src_ip"]] = src_counts.get(p["src_ip"], 0) + 1
+        if p.get("dst_ip"):
+            dst_counts[p["dst_ip"]] = dst_counts.get(p["dst_ip"], 0) + 1
+
+    server = max(src_counts, key=src_counts.get) if src_counts else None
+    client = max(dst_counts, key=dst_counts.get) if dst_counts else None
+    return client, server
 
 
 class FtpManyConnectionsRule(Rule):
@@ -56,7 +75,8 @@ class FtpFailureRateRule(Rule):
     def evaluate(self, conversation: dict) -> list[Alert]:
         responses = [
             p for p in conversation.get("packets", [])
-            if p.get("ftp") and p["ftp"].get("is_response") and p["ftp"].get("response_code") is not None
+            if p.get("protocol") == "FTP" and p.get("ftp") and p["ftp"].get("is_response")
+            and p["ftp"].get("response_code") is not None
         ]
         if len(responses) < FTP_FAILURE_MIN_RESPONSES:
             return []
@@ -66,13 +86,15 @@ class FtpFailureRateRule(Rule):
         if ratio < FTP_FAILURE_MIN_RATIO:
             return []
 
+        client, server = _identify_client_and_server(responses)
         severity = Severity.HIGH if ratio >= 0.8 else Severity.MEDIUM
         return [self._alert(
             conversation,
             f"Taux d'échec FTP élevé : {len(failures)}/{len(responses)} ({ratio:.0%}) "
-            f"depuis {conversation.get('ip_a')}",
+            f"depuis {client} vers {server}",
             severity,
             evidence={"failure_ratio": round(ratio, 2), "failure_count": len(failures)},
+            cible=client,
         )]
 
 

@@ -37,7 +37,7 @@ class StorageError(Exception):
 def get_collection() -> Collection:
     global _client
     if _client is None:
-        mongodb_uri = os.environ.get("MONGODB_URI")
+        mongodb_uri = os.environ.get("MONGODB_URI_ANALYSES")
         if not mongodb_uri:
             raise StorageError(...)
         _client = MongoClient(mongodb_uri, serverSelectionTimeoutMS=5000)

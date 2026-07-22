@@ -24,13 +24,19 @@ load_dotenv()  # charge MONGODB_URI depuis le fichier .env
 from . import storage
 from .schemas import AnalysisDetail, AnalysisSummary, ErrorResponse
 from .storage import StorageError
+from app.auth.routes import router as auth_router
 
 app = FastAPI(
     title="Network Anomaly Detector API",
     description="Analyse des captures PCAP et détection d'anomalies comportementales par protocole.",
     version="1.0.0",
 )
-
+app = FastAPI(
+    title="Network Anomaly Detector API",
+    description="Analyse des captures PCAP et détection d'anomalies comportementales par protocole.",
+    version="1.0.0",
+)
+app.include_router(auth_router)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # en production : liste précise des origines autorisées
