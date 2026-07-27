@@ -32,7 +32,7 @@ jobs:
         # Variables factices pour que l'app démarre en CI sans vrais secrets
         env:
           MONGODB_URI_AUTH: "mongodb://fake:27017/test"
-          MONGO_URI: "mongodb://fake:27017/test"
+          MONGODB_URI_ANALYSES: "mongodb://fake:27017/test"
           VIRUSTOTAL_API_KEY: "fake-key-for-ci"
           JWT_SECRET: "fake-secret-for-ci"
         run: python -m pytest -v
