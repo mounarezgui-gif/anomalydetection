@@ -25,6 +25,12 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Installer TShark
+        run: |
+          sudo apt-get update
+          echo "wireshark-common wireshark-common/install-setuid boolean false" | sudo debconf-set-selections
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y tshark
+
       - name: Installer les dépendances
         run: pip install -r requirements.txt
 
@@ -36,19 +42,7 @@ jobs:
           VIRUSTOTAL_API_KEY: "fake-key-for-ci"
           JWT_SECRET: "fake-secret-for-ci"
         run: python -m pytest -v
-      - name: Installer Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
 
-      - name: Installer TShark
-        run: |
-          sudo apt-get update
-          echo "wireshark-common wireshark-common/install-setuid boolean false" | sudo debconf-set-selections
-          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y tshark
-
-      - name: Installer les dépendances
-        run: pip install -r requirements.txt
   # ---------- Frontend : dépendances + build ----------
   frontend-build:
     name: Frontend - Build React
