@@ -66,8 +66,8 @@ class TestCreateAnalysis:
                 "/analyses", files={"file": ("sample.pcap", f, "application/vnd.tcpdump.pcap")}
             )
         body = response.json()
-        rule_names = {a["rule"] for a in body["alerts"]}
-        assert "PROTOCOL_NON_STANDARD_PORT" in rule_names
+        rule_names = {a["rule_id"] for a in body["alerts"]}
+        assert "port_protocol_mismatch" in rule_names
 
     def test_upload_pcapng_extension_accepted(self, client, sample_pcap_path):
         with sample_pcap_path.open("rb") as f:
