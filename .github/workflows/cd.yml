@@ -19,7 +19,6 @@ jobs:
           ref: main
 
       - name: Déployer sur Railway
-        working-directory: backend
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
         run: |
