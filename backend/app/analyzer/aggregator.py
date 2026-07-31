@@ -164,6 +164,8 @@ def _format_packet(packet: dict) -> dict:
         "dns": packet.get("dns"),   # <- AJOUT
         "ftp": packet.get("ftp"),   # <- AJOUT
         "tcp": packet["tcp"],  # None for non-TCP packets
+        "http": packet.get("http"),
+        "tls": packet.get("tls"),   # <- AJOUT
     }
 
 
