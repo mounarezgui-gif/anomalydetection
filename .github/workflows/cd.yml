@@ -23,7 +23,7 @@ jobs:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
         run: |
           npm install -g @railway/cli
-          railway up --service anomalydetection
+          railway up --service anomalydetection --detach
 
   deploy-frontend:
     name: Deploy - Vercel (Frontend)
