@@ -31,11 +31,6 @@ app = FastAPI(
     description="Analyse des captures PCAP et détection d'anomalies comportementales par protocole.",
     version="1.0.0",
 )
-app = FastAPI(
-    title="Network Anomaly Detector API",
-    description="Analyse des captures PCAP et détection d'anomalies comportementales par protocole.",
-    version="1.0.0",
-)
 app.include_router(auth_router)
 app.add_middleware(
     CORSMiddleware,
