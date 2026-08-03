@@ -8,3 +8,7 @@ venv/
 
 # Fichiers générés
 alerts/s
+node_modules/
+dist/
+.env
+.env.local
