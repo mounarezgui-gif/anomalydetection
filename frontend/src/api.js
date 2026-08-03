@@ -1,5 +1,5 @@
 // ---- Configuration ----
-export const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+export const API_URL = import.meta.env.VITE_API_URL || "https://anomalydetection-production.up.railway.app";
 console.log("API_URL =", API_URL);
 
 // ---- Session (localStorage) ----
