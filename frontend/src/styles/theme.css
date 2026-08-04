@@ -1,0 +1,195 @@
+/* ============================================================
+   THEME SYSTEM — mode nuit (défaut) + mode jour
+   Basculer via: <html data-theme="light"> ou data-theme="dark"
+   ============================================================ */
+
+:root,
+:root[data-theme="dark"] {
+  /* Surfaces — bleu-nuit profond, cartes sur la teinte de référence rgb(40 56 77) */
+  --bg: #16212e;
+  --panel: rgb(40 56 77);
+  --panel-raised: rgb(48 66 90);
+  --panel-glass: rgba(40, 56, 77, 0.6);
+  --border: #3c5069;
+  --border-strong: #4a5f7a;
+
+  /* Texte */
+  --text: #eef2f7;
+  --text-muted: #9aabc0;
+  --text-dim: #5c7086;
+
+  /* Accents — teal signal (repris de la référence visuelle) */
+  --accent: #2dd4bf;
+  --accent-dim: #1c6f66;
+  --accent-contrast: #06211d; /* texte posé sur --accent */
+  --accent-soft: rgba(45, 212, 191, 0.14);
+
+  /* Sévérité */
+  --sev-critical: #ef5464;
+  --sev-critical-bg: rgba(239, 84, 100, 0.14);
+  --sev-suspicious: #e8a33d;
+  --sev-suspicious-bg: rgba(232, 163, 61, 0.14);
+  --sev-warning: #e8b23d;
+  --sev-warning-bg: rgba(232, 178, 61, 0.14);
+  --sev-info: #38bdf8;
+  --sev-info-bg: rgba(56, 189, 248, 0.14);
+
+  /* Ombres + flou */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 8px 28px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 12px 1px rgba(45, 212, 191, 0.35);
+  --blur: blur(0px);
+
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  /* Surfaces — fond doux avec dégradé, panneaux en verre dépoli */
+  --bg: #eef2f7;
+  --panel: rgba(255, 255, 255, 0.6);
+  --panel-raised: rgba(255, 255, 255, 0.78);
+  --panel-glass: rgba(255, 255, 255, 0.55);
+  --border: rgba(40, 56, 77, 0.12);
+  --border-strong: rgba(40, 56, 77, 0.22);
+
+  /* Texte — même bleu-nuit de référence, en encre */
+  --text: rgb(24 33 46);
+  --text-muted: rgb(84 99 122);
+  --text-dim: rgb(140 154 175);
+
+  /* Accents — teal identique au mode nuit, recalibré pour le contraste sur clair */
+  --accent: #0f9c8c;
+  --accent-dim: #a6ece2;
+  --accent-contrast: #f2fffb;
+  --accent-soft: rgba(15, 156, 140, 0.10);
+
+  /* Sévérité — recalées pour rester lisibles sur fond clair */
+  --sev-critical: #c8283f;
+  --sev-critical-bg: rgba(200, 40, 63, 0.08);
+  --sev-suspicious: #a8760f;
+  --sev-suspicious-bg: rgba(168, 118, 15, 0.09);
+  --sev-warning: #92791a;
+  --sev-warning-bg: rgba(146, 121, 26, 0.09);
+  --sev-info: #1c6fae;
+  --sev-info-bg: rgba(28, 111, 174, 0.09);
+
+  /* Ombres douces + flou : c'est le flou qui porte le mode jour, pas juste la couleur */
+  --shadow-sm: 0 1px 2px rgba(16, 22, 42, 0.06);
+  --shadow-md: 0 16px 40px rgba(40, 56, 77, 0.14);
+  --shadow-glow: 0 0 0 4px rgba(15, 156, 140, 0.12);
+  --blur: blur(20px);
+
+  color-scheme: light;
+}
+
+/* Fond du mode jour : dégradé doux pour donner de la profondeur au verre */
+:root[data-theme="light"] body {
+  background:
+    radial-gradient(circle at 12% 8%, rgba(15, 156, 140, 0.10), transparent 42%),
+    radial-gradient(circle at 90% 15%, rgba(40, 56, 77, 0.08), transparent 45%),
+    var(--bg);
+}
+
+/* Toute surface "panneau" devient du verre dépoli en mode jour */
+:root[data-theme="light"] .panel,
+:root[data-theme="light"] .auth-card,
+:root[data-theme="light"] .analysis-item,
+:root[data-theme="light"] .page-card,
+:root[data-theme="light"] .conversation-card,
+:root[data-theme="light"] .metric-box,
+:root[data-theme="light"] .packet-item,
+:root[data-theme="light"] .alert-card,
+:root[data-theme="light"] .detail-entry,
+:root[data-theme="light"] .stat,
+:root[data-theme="light"] header.app-header,
+:root[data-theme="light"] .toast {
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Polices : Montserrat porte l'identité (titres ET corps) pour un rendu corporate homogène,
+   Plex Mono reste réservé aux données techniques (IP, timestamps, hex...) */
+:root {
+  --mono: "IBM Plex Mono", "SF Mono", Consolas, monospace;
+  --sans: "Montserrat", -apple-system, "Segoe UI", sans-serif;
+  --display: "Montserrat", var(--sans);
+  --radius: 10px;
+  --radius-sm: 6px;
+  --transition-theme: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, backdrop-filter 0.25s ease;
+}
+
+/* À ajouter dans le <head> :
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+*/
+
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.5;
+  transition: var(--transition-theme);
+}
+a { color: inherit; }
+
+/* Titres / eyebrow portent l'identité de marque */
+h1, h2, h3, .brand-text h1, .detail-header h2 {
+  font-family: var(--display);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+
+/* Tous les panneaux, bordures, boutons basculent en douceur */
+.panel, .auth-card, .analysis-item, .page-card, .conversation-card,
+.metric-box, .packet-item, .alert-card, .detail-entry, .stat, .toast {
+  transition: var(--transition-theme);
+}
+
+/* ---------- Radar : signature qui change de personnalité selon le mode ---------- */
+.radar {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 1.5px solid var(--accent-dim);
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+  box-shadow: var(--shadow-glow);
+}
+.radar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: conic-gradient(from 0deg, transparent 0deg, transparent 300deg, var(--accent) 360deg);
+  animation: sweep 2.4s linear infinite;
+}
+.radar::after {
+  content: "";
+  position: absolute;
+  inset: 40%;
+  background: var(--accent);
+  border-radius: 50%;
+  box-shadow: 0 0 8px 1px var(--accent);
+}
+@keyframes sweep { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .radar::before { animation: none; } }
+
+/* ---------- Toggle jour/nuit ---------- */
+.theme-toggle {
+  display: inline-flex; align-items: center; gap: 6px;
+  border: 1px solid var(--border); background: var(--panel-raised);
+  border-radius: 999px; padding: 5px; cursor: pointer;
+}
+.theme-toggle button {
+  border: none; background: transparent; border-radius: 999px;
+  width: 26px; height: 26px; display: grid; place-items: center;
+  color: var(--text-muted); cursor: pointer;
+}
+.theme-toggle button.active {
+  background: var(--accent-soft); color: var(--accent);
+}
