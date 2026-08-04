@@ -1,599 +1,189 @@
 /* ============================================================
-   THEME SYSTEM — mode nuit (défaut) + mode jour
-   Basculer via: <html data-theme="light"> ou data-theme="dark"
+   Thème global et bouton dark/light mode
    ============================================================ */
-
-:root,
-:root[data-theme="dark"] {
-  /* Surfaces — bleu-nuit profond, cartes sur la teinte de référence rgb(40 56 77) */
-  --bg: #16212e;
-  --panel: rgb(40 56 77);
-  --panel-raised: rgb(48 66 90);
-  --panel-glass: rgba(40, 56, 77, 0.6);
-  --border: #3c5069;
-  --border-strong: #4a5f7a;
-
-  /* Texte */
-  --text: #eef2f7;
-  --text-muted: #9aabc0;
-  --text-dim: #5c7086;
-
-  /* Accents — teal signal (repris de la référence visuelle) */
-  --accent: #2dd4bf;
-  --accent-dim: #1c6f66;
-  --accent-contrast: #06211d; /* texte posé sur --accent */
-  --accent-soft: rgba(45, 212, 191, 0.14);
-
-  /* Sévérité */
-  --sev-critical: #ef5464;
-  --sev-critical-bg: rgba(239, 84, 100, 0.14);
-  --sev-suspicious: #e8a33d;
-  --sev-suspicious-bg: rgba(232, 163, 61, 0.14);
-  --sev-warning: #e8b23d;
-  --sev-warning-bg: rgba(232, 178, 61, 0.14);
-  --sev-info: #38bdf8;
-  --sev-info-bg: rgba(56, 189, 248, 0.14);
-
-  /* Ombres + flou */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 8px 28px rgba(0, 0, 0, 0.5);
-  --shadow-glow: 0 0 12px 1px rgba(45, 212, 191, 0.35);
-  --blur: blur(0px);
-
+:root {
   color-scheme: dark;
+  --bg: #0f172a;
+  --panel: #16212e;
+  --panel-raised: #1f2a3b;
+  --border: rgba(148, 163, 184, 0.25);
+  --border-strong: rgba(148, 163, 184, 0.4);
+  --text: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+  --accent: #2dd4bf;
+  --accent-dim: #115e59;
+  --accent-soft: rgba(45, 212, 191, 0.16);
+  --sev-critical: #f87171;
+  --sev-critical-bg: rgba(248, 113, 113, 0.14);
+  --sev-suspicious: #fbbf24;
+  --sev-suspicious-bg: rgba(251, 191, 36, 0.16);
+  --sev-warning: #f59e0b;
+  --sev-warning-bg: rgba(245, 158, 11, 0.16);
+  --sev-info: #38bdf8;
+  --sev-info-bg: rgba(56, 189, 248, 0.16);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 12px 30px rgba(0, 0, 0, 0.28);
+  --mono: "IBM Plex Mono", monospace;
+  --sans: "Montserrat", "Segoe UI", sans-serif;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --transition-theme: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
 :root[data-theme="light"] {
-  /* Surfaces — fond doux avec dégradé, panneaux en verre dépoli */
-  --bg: #eef2f7;
-  --panel: rgba(255, 255, 255, 0.6);
-  --panel-raised: rgba(255, 255, 255, 0.78);
-  --panel-glass: rgba(255, 255, 255, 0.55);
-  --border: rgba(40, 56, 77, 0.12);
-  --border-strong: rgba(40, 56, 77, 0.22);
-
-  /* Texte — même bleu-nuit de référence, en encre */
-  --text: rgb(24 33 46);
-  --text-muted: rgb(84 99 122);
-  --text-dim: rgb(140 154 175);
-
-  /* Accents — teal identique au mode nuit, recalibré pour le contraste sur clair */
-  --accent: #0f9c8c;
-  --accent-dim: #a6ece2;
-  --accent-contrast: #f2fffb;
-  --accent-soft: rgba(15, 156, 140, 0.10);
-
-  /* Sévérité — recalées pour rester lisibles sur fond clair */
-  --sev-critical: #c8283f;
-  --sev-critical-bg: rgba(200, 40, 63, 0.08);
-  --sev-suspicious: #a8760f;
-  --sev-suspicious-bg: rgba(168, 118, 15, 0.09);
-  --sev-warning: #92791a;
-  --sev-warning-bg: rgba(146, 121, 26, 0.09);
-  --sev-info: #1c6fae;
-  --sev-info-bg: rgba(28, 111, 174, 0.09);
-
-  /* Ombres douces + flou : c'est le flou qui porte le mode jour, pas juste la couleur */
-  --shadow-sm: 0 1px 2px rgba(16, 22, 42, 0.06);
-  --shadow-md: 0 16px 40px rgba(40, 56, 77, 0.14);
-  --shadow-glow: 0 0 0 4px rgba(15, 156, 140, 0.12);
-  --blur: blur(20px);
-
   color-scheme: light;
+  --bg: #f4f7fb;
+  --panel: #ffffff;
+  --panel-raised: #f8fafc;
+  --border: rgba(15, 23, 42, 0.12);
+  --border-strong: rgba(15, 23, 42, 0.2);
+  --text: #0f172a;
+  --text-muted: #475569;
+  --text-dim: #64748b;
+  --accent: #0f766e;
+  --accent-dim: #99f6e4;
+  --accent-soft: rgba(15, 118, 110, 0.12);
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.08);
+  --shadow-md: 0 12px 30px rgba(15, 23, 42, 0.12);
 }
 
-/* Fond du mode jour : dégradé doux pour donner de la profondeur au verre */
-:root[data-theme="light"] body {
-  background:
-    radial-gradient(circle at 12% 8%, rgba(15, 156, 140, 0.10), transparent 42%),
-    radial-gradient(circle at 90% 15%, rgba(40, 56, 77, 0.08), transparent 45%),
-    var(--bg);
+html, body, #root {
+  height: 100%;
 }
 
-/* Toute surface "panneau" devient du verre dépoli en mode jour */
-:root[data-theme="light"] .panel,
-:root[data-theme="light"] .auth-card,
-:root[data-theme="light"] .analysis-item,
-:root[data-theme="light"] .page-card,
-:root[data-theme="light"] .conversation-card,
-:root[data-theme="light"] .metric-box,
-:root[data-theme="light"] .packet-item,
-:root[data-theme="light"] .alert-card,
-:root[data-theme="light"] .detail-entry,
-:root[data-theme="light"] .stat,
-:root[data-theme="light"] header.app-header,
-:root[data-theme="light"] .toast {
-  backdrop-filter: var(--blur);
-  -webkit-backdrop-filter: var(--blur);
-  background: var(--panel);
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-sm);
-}
-
-/* Polices : Montserrat porte l'identité (titres ET corps) pour un rendu corporate homogène,
-   Plex Mono reste réservé aux données techniques (IP, timestamps, hex...) */
-:root {
-  --mono: "IBM Plex Mono", "SF Mono", Consolas, monospace;
-  --sans: "Montserrat", -apple-system, "Segoe UI", sans-serif;
-  --display: "Montserrat", var(--sans);
-  --radius: 10px;
-  --radius-sm: 6px;
-  --transition-theme: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, backdrop-filter 0.25s ease;
-}
-
-/* À ajouter dans le <head> :
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-*/
-
-* { box-sizing: border-box; }
-html, body, #root { height: 100%; }
 body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
   font-family: var(--sans);
-  font-size: 14px;
-  line-height: 1.5;
-  transition: var(--transition-theme);
-}
-a { color: inherit; }
-
-/* Titres / eyebrow portent l'identité de marque */
-h1, h2, h3, .brand-text h1, .detail-header h2 {
-  font-family: var(--display);
-  font-weight: 700;
-  letter-spacing: -0.015em;
-}
-
-/* Tous les panneaux, bordures, boutons basculent en douceur */
-.panel, .auth-card, .analysis-item, .page-card, .conversation-card,
-.metric-box, .packet-item, .alert-card, .detail-entry, .stat, .toast {
   transition: var(--transition-theme);
 }
 
-/* ---------- Radar : signature qui change de personnalité selon le mode ---------- */
-.radar {
-  width: 28px; height: 28px; border-radius: 50%;
-  border: 1.5px solid var(--accent-dim);
-  position: relative;
-  overflow: hidden;
-  flex-shrink: 0;
-  box-shadow: var(--shadow-glow);
-}
-.radar::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: conic-gradient(from 0deg, transparent 0deg, transparent 300deg, var(--accent) 360deg);
-  animation: sweep 2.4s linear infinite;
-}
-.radar::after {
-  content: "";
-  position: absolute;
-  inset: 40%;
-  background: var(--accent);
-  border-radius: 50%;
-  box-shadow: 0 0 8px 1px var(--accent);
-}
-@keyframes sweep { to { transform: rotate(360deg); } }
-@media (prefers-reduced-motion: reduce) { .radar::before { animation: none; } }
+* { box-sizing: border-box; }
 
-/* ---------- Toggle jour/nuit ---------- */
 .theme-toggle {
-  display: inline-flex; align-items: center; gap: 6px;
-  border: 1px solid var(--border); background: var(--panel-raised);
-  border-radius: 999px; padding: 5px; cursor: pointer;
-}
-.theme-toggle button {
-  border: none; background: transparent; border-radius: 999px;
-  width: 26px; height: 26px; display: grid; place-items: center;
-  color: var(--text-muted); cursor: pointer;
-}
-.theme-toggle button.active {
-  background: var(--accent-soft); color: var(--accent);
-}
-
-/* ---------- Layout général ---------- */
-body {
-  background: var(--bg);
-  color: var(--text);
-}
-
-#root {
-  min-height: 100%;
-}
-
-.layout {
-  display: grid;
-  grid-template-columns: 320px minmax(0, 1fr);
-  min-height: calc(100vh - 88px);
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
-}
-
-.sidebar {
-  border-right: 1px solid var(--border);
-  padding: 20px;
-  background: rgba(255,255,255,0.02);
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.main {
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.app-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 18px 24px;
-  border-bottom: 1px solid var(--border);
-  background: rgba(255,255,255,0.03);
-  backdrop-filter: blur(10px);
-}
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.brand-text h1 {
-  margin: 2px 0 0;
-  font-size: 1.05rem;
-}
-
-.eyebrow {
-  font-size: 0.72rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--accent);
-}
-
-.nav-links {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.nav-links a {
-  text-decoration: none;
-  color: var(--text-muted);
-  padding: 8px 10px;
-  border-radius: 999px;
-}
-
-.nav-links a.active {
-  color: var(--accent);
-  background: var(--accent-soft);
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.api-status, .user-bar {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 10px;
   border: 1px solid var(--border);
-  border-radius: 999px;
   background: var(--panel-raised);
-  font-size: 0.82rem;
-}
-
-.dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--text-dim);
-}
-
-.dot.ok { background: var(--accent); }
-.dot.down { background: var(--sev-critical); }
-
-.user-name { font-weight: 600; }
-.role-pill, .admin-link, .logout-btn {
-  font-size: 0.8rem;
-}
-
-.logout-btn, .btn {
-  border: none;
-  cursor: pointer;
-  border-radius: 8px;
-  padding: 8px 12px;
   color: var(--text);
-  background: var(--panel-raised);
-}
-
-.btn.danger {
-  background: var(--sev-critical-bg);
-  color: var(--sev-critical);
-}
-
-.upload-zone {
-  border: 1px dashed var(--border-strong);
-  border-radius: 14px;
-  padding: 18px;
-  text-align: center;
-  background: var(--panel-raised);
+  border-radius: 999px;
+  padding: 8px 12px;
   cursor: pointer;
-  transition: border-color 0.2s ease, transform 0.2s ease;
-}
-
-.upload-zone.dragover {
-  border-color: var(--accent);
-  transform: translateY(-1px);
-}
-
-.upload-zone input {
-  display: none;
-}
-
-.upload-label {
-  font-size: 0.95rem;
-  margin-bottom: 6px;
-}
-
-.upload-hint {
-  color: var(--text-muted);
-  font-size: 0.8rem;
-}
-
-.analysis-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.list-eyebrow {
-  font-size: 0.78rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  margin-bottom: 4px;
-}
-
-.analysis-item {
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 12px;
-  background: var(--panel);
-  cursor: pointer;
-  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
-}
-
-.analysis-item:hover, .analysis-item.active {
-  border-color: var(--accent);
-  background: var(--accent-soft);
-  transform: translateY(-1px);
-}
-
-.filename {
+  font-size: 0.83rem;
   font-weight: 600;
-  margin-bottom: 6px;
 }
 
-.meta, .sub, .timestamp, .cible, .description, .route, .meta {
-  color: var(--text-muted);
-  font-size: 0.82rem;
+.theme-toggle__icon {
+  font-size: 0.95rem;
 }
 
-.badge-row, .chip-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 8px;
-}
+/* ============================================================
+   MANQUANT : layout interne des cartes conversation / alerte,
+   utilisé par Conversations.jsx et Alerts.jsx mais jamais stylisé.
+   ============================================================ */
 
-.chip, .sev-badge {
-  display: inline-flex;
-  align-items: center;
-  border-radius: 999px;
-  padding: 4px 8px;
-  background: var(--panel-raised);
-  color: var(--text);
-  font-size: 0.75rem;
-}
-
-.sev-CRITICAL { color: var(--sev-critical); }
-.sev-SUSPICIOUS { color: var(--sev-suspicious); }
-.sev-WARNING { color: var(--sev-warning); }
-.sev-INFO { color: var(--sev-info); }
-
-.placeholder, .page-card, .detail-entry, .conversation-card, .alert-card {
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 16px;
-  background: var(--panel);
-  box-shadow: var(--shadow-sm);
-}
-
-.placeholder {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  min-height: 220px;
-  color: var(--text-muted);
-}
-
-.detail-header {
+/* ---------- Carte conversation (Conversations.jsx) ---------- */
+.conversation-card .card-top {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  gap: 12px;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 10px;
 }
-
-.stat-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.stat {
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 14px;
-  background: var(--panel);
-}
-
-.stat .value {
-  font-size: 1.1rem;
-  font-weight: 700;
-}
-
-.stat .label {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  margin-top: 4px;
-}
-
-.section-nav {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.nav-pill {
-  border: 1px solid var(--border);
-  background: var(--panel);
+.conversation-card .card-title {
+  font-size: 14px;
+  font-weight: 600;
   color: var(--text);
-  border-radius: 999px;
-  padding: 8px 12px;
-  cursor: pointer;
 }
-
-.nav-pill.active {
-  background: var(--accent-soft);
-  color: var(--accent);
-  border-color: var(--accent-dim);
-}
-
-.section-title {
-  font-size: 0.95rem;
-  font-weight: 700;
+.conversation-card .card-sub {
   margin-top: 4px;
-}
-
-.no-alerts {
-  padding: 12px 0;
-  color: var(--text-muted);
-}
-
-.alert-row {
-  display: grid;
-  grid-template-columns: 90px 100px 1fr auto;
-  gap: 12px;
-  align-items: center;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--border);
-}
-
-.alert-row:last-child {
-  border-bottom: none;
-}
-
-.conversation-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.metric-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-  margin-top: 12px;
-}
-
-.metric-box {
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 10px;
-  background: var(--panel-raised);
-}
-
-.metric-box .value {
-  font-weight: 700;
-}
-
-.metric-box .label {
-  color: var(--text-muted);
-  font-size: 0.78rem;
-  margin-top: 3px;
-}
-
-.packet-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 12px;
-}
-
-.packet-item {
-  display: grid;
-  grid-template-columns: 48px 1fr auto;
-  gap: 10px;
-  align-items: center;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 10px;
-  background: var(--panel-raised);
-}
-
-.packet-number {
-  color: var(--accent);
-  font-weight: 700;
-}
-
-.packet-side {
-  text-align: right;
-  color: var(--text-muted);
-  font-size: 0.8rem;
-}
-
-.detail-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-  margin-top: 10px;
-}
-
-.detail-key {
-  font-size: 0.78rem;
-  color: var(--accent);
-  margin-bottom: 6px;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-}
-
-.detail-json {
-  margin: 0;
-  white-space: pre-wrap;
   font-family: var(--mono);
-  font-size: 0.8rem;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ---------- Carte alerte (Alerts.jsx) ---------- */
+.alert-card .alert-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.alert-title {
+  font-size: 14px;
+  font-weight: 600;
   color: var(--text);
 }
-
-@media (max-width: 1024px) {
-  .layout { grid-template-columns: 1fr; }
-  .sidebar { border-right: none; border-bottom: 1px solid var(--border); }
-  .stat-grid, .conversation-grid, .detail-grid { grid-template-columns: 1fr 1fr; }
+.alert-sub {
+  margin-top: 4px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-muted);
 }
 
-@media (max-width: 720px) {
-  .app-header { flex-direction: column; align-items: flex-start; }
-  .header-right { width: 100%; flex-wrap: wrap; }
-  .stat-grid, .conversation-grid, .detail-grid, .alert-row { grid-template-columns: 1fr; }
-  .main, .sidebar { padding: 16px; }
+/* ---------- Contenu de detail-entry (utilisé dans les deux) ---------- */
+.detail-entry .detail-value {
+  font-size: 12.5px;
+  color: var(--text);
+  word-break: break-word;
+  margin-top: 2px;
 }
+
+/* ============================================================
+   Sélecteur d'analyses (section-nav) : scroll horizontal +
+   recherche — perdu dans la fusion, on le remet ici.
+   ============================================================ */
+.section-nav-wrap {
+  position: relative;
+  margin-bottom: 18px;
+}
+.section-nav-search {
+  width: 100%;
+  padding: 9px 12px;
+  margin-bottom: 10px;
+  background: var(--panel-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm, 6px);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 13px;
+}
+.section-nav-search::placeholder { color: var(--text-dim); }
+.section-nav-search:focus {
+  outline: none;
+  border-color: var(--accent-dim);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.section-nav {
+  flex-wrap: nowrap !important;   /* surcharge le "wrap" défini plus haut dans ce fichier */
+  overflow-x: auto;
+  scrollbar-width: thin;
+  padding-bottom: 6px;
+  scroll-snap-type: x proximity;
+}
+.section-nav::-webkit-scrollbar { height: 5px; }
+.section-nav::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 999px; }
+.section-nav::-webkit-scrollbar-track { background: transparent; }
+.nav-pill {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+  white-space: nowrap;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.section-nav-wrap::before,
+.section-nav-wrap::after {
+  content: "";
+  position: absolute;
+  top: 42px; bottom: 6px;
+  width: 32px;
+  pointer-events: none;
+  z-index: 1;
+}
+.section-nav-wrap::before { left: 0; background: linear-gradient(90deg, var(--bg), transparent); }
+.section-nav-wrap::after  { right: 0; background: linear-gradient(270deg, var(--bg), transparent); }

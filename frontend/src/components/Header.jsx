@@ -6,6 +6,10 @@ import { apiFetch } from "../api";
 export default function Header() {
   const { user, logout } = useAuth();
   const [apiOk, setApiOk] = useState(null);
+  const [theme, setTheme] = useState(() => {
+    if (typeof window === "undefined") return "dark";
+    return localStorage.getItem("theme") || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+  });
 
   useEffect(() => {
     let mounted = true;
@@ -25,6 +29,11 @@ export default function Header() {
     };
   }, []);
 
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+  }, [theme]);
+
   return (
     <header className="app-header">
       <div className="brand">
@@ -42,6 +51,15 @@ export default function Header() {
       </nav>
 
       <div className="header-right">
+        <button
+          type="button"
+          className="theme-toggle"
+          onClick={() => setTheme((current) => (current === "dark" ? "light" : "dark"))}
+          aria-label={theme === "dark" ? "Activer le mode clair" : "Activer le mode sombre"}
+        >
+          <span className="theme-toggle__icon">{theme === "dark" ? "☀️" : "🌙"}</span>
+          <span>{theme === "dark" ? "Light mode" : "Dark mode"}</span>
+        </button>
         <div className="api-status">
           <span className={`dot ${apiOk === null ? "" : apiOk ? "ok" : "down"}`}></span>
           <span>{apiOk === null ? "connexion..." : apiOk ? "API connectée" : "API injoignable"}</span>
