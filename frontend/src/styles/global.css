@@ -134,6 +134,204 @@ body {
 }
 
 /* ============================================================
+   Layout général du tableau de bord
+   ============================================================ */
+.layout {
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  min-height: calc(100vh - 88px);
+}
+.sidebar {
+  border-right: 1px solid var(--border);
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.02);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.main {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.03);
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.brand-text h1 {
+  margin: 2px 0 0;
+  font-size: 1.05rem;
+}
+.nav-links {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.nav-links a {
+  color: var(--text-muted);
+  text-decoration: none;
+  padding: 8px 10px;
+  border-radius: 999px;
+}
+.nav-links a.active {
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.api-status, .user-bar {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--panel-raised);
+  font-size: 0.82rem;
+}
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-dim);
+}
+.dot.ok { background: var(--accent); }
+.dot.down { background: var(--sev-critical); }
+.upload-zone {
+  border: 1px dashed var(--border-strong);
+  border-radius: 14px;
+  padding: 18px;
+  text-align: center;
+  background: var(--panel-raised);
+  cursor: pointer;
+}
+.upload-zone.dragover {
+  border-color: var(--accent);
+}
+.analysis-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.analysis-item {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  background: var(--panel);
+  cursor: pointer;
+}
+.analysis-item.active, .analysis-item:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.placeholder, .page-card, .detail-entry, .conversation-card, .alert-card {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  background: var(--panel);
+  box-shadow: var(--shadow-sm);
+}
+.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 220px;
+  color: var(--text-muted);
+}
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+.stat {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  background: var(--panel);
+}
+.stat .value {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+.stat .label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+.section-nav {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.nav-pill {
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+.nav-pill.active {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent-dim);
+}
+.conversation-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+.metric-box {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px;
+  background: var(--panel-raised);
+}
+.packet-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+.packet-item {
+  display: grid;
+  grid-template-columns: 48px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px;
+  background: var(--panel-raised);
+}
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* ============================================================
    Sélecteur d'analyses (section-nav) : scroll horizontal +
    recherche — perdu dans la fusion, on le remet ici.
    ============================================================ */
