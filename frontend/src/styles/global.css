@@ -1,387 +1,118 @@
 /* ============================================================
-   Thème global et bouton dark/light mode
-   ============================================================ */
-:root {
-  color-scheme: dark;
-  --bg: #0f172a;
-  --panel: #16212e;
-  --panel-raised: #1f2a3b;
-  --border: rgba(148, 163, 184, 0.25);
-  --border-strong: rgba(148, 163, 184, 0.4);
-  --text: #f8fafc;
-  --text-muted: #94a3b8;
-  --text-dim: #64748b;
-  --accent: #2dd4bf;
-  --accent-dim: #115e59;
-  --accent-soft: rgba(45, 212, 191, 0.16);
-  --sev-critical: #f87171;
-  --sev-critical-bg: rgba(248, 113, 113, 0.14);
-  --sev-suspicious: #fbbf24;
-  --sev-suspicious-bg: rgba(251, 191, 36, 0.16);
-  --sev-warning: #f59e0b;
-  --sev-warning-bg: rgba(245, 158, 11, 0.16);
-  --sev-info: #38bdf8;
-  --sev-info-bg: rgba(56, 189, 248, 0.16);
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
-  --shadow-md: 0 12px 30px rgba(0, 0, 0, 0.28);
-  --mono: "IBM Plex Mono", monospace;
-  --sans: "Montserrat", "Segoe UI", sans-serif;
-  --radius: 12px;
-  --radius-sm: 8px;
-  --transition-theme: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-}
-
-:root[data-theme="light"] {
-  color-scheme: light;
-  --bg: #f4f7fb;
-  --panel: #ffffff;
-  --panel-raised: #f8fafc;
-  --border: rgba(15, 23, 42, 0.12);
-  --border-strong: rgba(15, 23, 42, 0.2);
-  --text: #0f172a;
-  --text-muted: #475569;
-  --text-dim: #64748b;
-  --accent: #0f766e;
-  --accent-dim: #99f6e4;
-  --accent-soft: rgba(15, 118, 110, 0.12);
-  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.08);
-  --shadow-md: 0 12px 30px rgba(15, 23, 42, 0.12);
-}
-
-html, body, #root {
-  height: 100%;
-}
-
-body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--sans);
-  transition: var(--transition-theme);
-}
-
-* { box-sizing: border-box; }
-
-.theme-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  border: 1px solid var(--border);
-  background: var(--panel-raised);
-  color: var(--text);
-  border-radius: 999px;
-  padding: 8px 12px;
-  cursor: pointer;
-  font-size: 0.83rem;
-  font-weight: 600;
-}
-
-.theme-toggle__icon {
-  font-size: 0.95rem;
-}
-
-/* ============================================================
-   MANQUANT : layout interne des cartes conversation / alerte,
-   utilisé par Conversations.jsx et Alerts.jsx mais jamais stylisé.
+   POLISH — raffinements visuels uniquement, aucune classe
+   supprimée ni renommée. Inspiré des cartes à icône (carré
+   teinté + titre + sous-titre + lien "En savoir plus →").
+   À coller à la fin de ton global.css.
    ============================================================ */
 
-/* ---------- Carte conversation (Conversations.jsx) ---------- */
-.conversation-card .card-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-.conversation-card .card-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text);
-}
-.conversation-card .card-sub {
-  margin-top: 4px;
-  font-family: var(--mono);
-  font-size: 12px;
-  color: var(--text-muted);
+/* Cartes plus premium : rayon un peu plus généreux, effet de survol qui soulève */
+.analysis-item,
+.conversation-card,
+.alert-card,
+.page-card,
+.stat,
+.metric-box,
+.packet-item,
+.detail-entry {
+  border-radius: 16px;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, background 0.18s ease;
 }
 
-/* ---------- Carte alerte (Alerts.jsx) ---------- */
-.alert-card .alert-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 10px;
-  margin-bottom: 8px;
-}
-.alert-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text);
-}
-.alert-sub {
-  margin-top: 4px;
-  font-family: var(--mono);
-  font-size: 12px;
-  color: var(--text-muted);
+.analysis-item:hover,
+.conversation-card:hover,
+.alert-card:hover,
+.page-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--accent-dim);
 }
 
-/* ---------- Contenu de detail-entry (utilisé dans les deux) ---------- */
-.detail-entry .detail-value {
-  font-size: 12.5px;
-  color: var(--text);
-  word-break: break-word;
-  margin-top: 2px;
-}
-
-/* ============================================================
-   Layout général du tableau de bord
-   ============================================================ */
-.layout {
-  display: grid;
-  grid-template-columns: 320px minmax(0, 1fr);
-  min-height: calc(100vh - 88px);
-}
-.sidebar {
-  border-right: 1px solid var(--border);
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.02);
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-.main {
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-.app-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 18px 24px;
-  border-bottom: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.03);
-}
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.brand-text h1 {
-  margin: 2px 0 0;
-  font-size: 1.05rem;
-}
-.nav-links {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-.nav-links a {
-  color: var(--text-muted);
-  text-decoration: none;
-  padding: 8px 10px;
-  border-radius: 999px;
-}
-.nav-links a.active {
-  color: var(--accent);
-  background: var(--accent-soft);
-}
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.api-status, .user-bar {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 10px;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  background: var(--panel-raised);
-  font-size: 0.82rem;
-}
-.dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--text-dim);
-}
-.dot.ok { background: var(--accent); }
-.dot.down { background: var(--sev-critical); }
-.upload-zone {
-  border: 1px dashed var(--border-strong);
-  border-radius: 14px;
-  padding: 18px;
-  text-align: center;
-  background: var(--panel-raised);
-  cursor: pointer;
-}
-.upload-zone.dragover {
-  border-color: var(--accent);
-}
-.analysis-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.analysis-item {
-  border: 1px solid var(--border);
+/* Carré d'icône teinté, comme sur la référence (icône dans un carré arrondi coloré) */
+.icon-box {
+  width: 44px;
+  height: 44px;
   border-radius: 12px;
-  padding: 12px;
-  background: var(--panel);
+  display: grid;
+  place-items: center;
+  background: var(--accent-soft);
+  color: var(--accent);
+  margin-bottom: 14px;
+  flex-shrink: 0;
+}
+.icon-box svg { width: 20px; height: 20px; }
+
+/* Titre de carte, un cran plus affirmé */
+.card-title,
+.alert-title,
+.filename {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+/* Lien "En savoir plus →" : la flèche glisse légèrement au survol */
+.link-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
   cursor: pointer;
 }
-.analysis-item.active, .analysis-item:hover {
-  border-color: var(--accent);
-  background: var(--accent-soft);
+.link-arrow svg,
+.link-arrow .arrow {
+  transition: transform 0.18s ease;
 }
-.placeholder, .page-card, .detail-entry, .conversation-card, .alert-card {
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 16px;
-  background: var(--panel);
+.link-arrow:hover svg,
+.link-arrow:hover .arrow {
+  transform: translateX(3px);
+}
+
+/* Pills et badges : un peu plus doux, meilleur contraste au survol */
+.nav-pill {
+  border-radius: 999px;
+  transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+.nav-pill:hover {
+  border-color: var(--accent-dim);
+  transform: translateY(-1px);
+}
+
+.sev-badge,
+.chip {
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+/* Boutons : légère élévation au survol, cohérente avec les cartes */
+.btn,
+.auth-submit,
+.theme-toggle {
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+.btn:hover,
+.auth-submit:hover {
+  transform: translateY(-1px);
   box-shadow: var(--shadow-sm);
 }
-.placeholder {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  min-height: 220px;
-  color: var(--text-muted);
-}
-.stat-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
-}
-.stat {
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 14px;
-  background: var(--panel);
-}
+
+/* Stat cards : valeur plus grande et affirmée, comme un vrai dashboard premium */
 .stat .value {
-  font-size: 1.1rem;
-  font-weight: 700;
-}
-.stat .label {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  margin-top: 4px;
-}
-.section-nav {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-.nav-pill {
-  border: 1px solid var(--border);
-  background: var(--panel);
-  color: var(--text);
-  border-radius: 999px;
-  padding: 8px 12px;
-  cursor: pointer;
-}
-.nav-pill.active {
-  background: var(--accent-soft);
-  color: var(--accent);
-  border-color: var(--accent-dim);
-}
-.conversation-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-}
-.metric-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-  margin-top: 12px;
-}
-.metric-box {
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 10px;
-  background: var(--panel-raised);
-}
-.packet-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 12px;
-}
-.packet-item {
-  display: grid;
-  grid-template-columns: 48px 1fr auto;
-  gap: 10px;
-  align-items: center;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 10px;
-  background: var(--panel-raised);
-}
-.detail-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-  margin-top: 10px;
+  font-size: 1.35rem;
+  letter-spacing: -0.02em;
 }
 
-/* ============================================================
-   Sélecteur d'analyses (section-nav) : scroll horizontal +
-   recherche — perdu dans la fusion, on le remet ici.
-   ============================================================ */
-.section-nav-wrap {
-  position: relative;
-  margin-bottom: 18px;
+/* Header : légère ombre portée pour le détacher du fond, sans changer sa structure */
+.app-header {
+  box-shadow: 0 1px 0 var(--border), var(--shadow-sm);
 }
-.section-nav-search {
-  width: 100%;
-  padding: 9px 12px;
-  margin-bottom: 10px;
-  background: var(--panel-raised);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm, 6px);
-  color: var(--text);
-  font-family: var(--sans);
-  font-size: 13px;
+
+/* Zone de dépôt : rendue plus accueillante au survol */
+.upload-zone {
+  transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
 }
-.section-nav-search::placeholder { color: var(--text-dim); }
-.section-nav-search:focus {
-  outline: none;
-  border-color: var(--accent-dim);
-  box-shadow: 0 0 0 3px var(--accent-soft);
+.upload-zone:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
 }
-.section-nav {
-  flex-wrap: nowrap !important;   /* surcharge le "wrap" défini plus haut dans ce fichier */
-  overflow-x: auto;
-  scrollbar-width: thin;
-  padding-bottom: 6px;
-  scroll-snap-type: x proximity;
-}
-.section-nav::-webkit-scrollbar { height: 5px; }
-.section-nav::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 999px; }
-.section-nav::-webkit-scrollbar-track { background: transparent; }
-.nav-pill {
-  flex: 0 0 auto;
-  scroll-snap-align: start;
-  white-space: nowrap;
-  max-width: 200px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.section-nav-wrap::before,
-.section-nav-wrap::after {
-  content: "";
-  position: absolute;
-  top: 42px; bottom: 6px;
-  width: 32px;
-  pointer-events: none;
-  z-index: 1;
-}
-.section-nav-wrap::before { left: 0; background: linear-gradient(90deg, var(--bg), transparent); }
-.section-nav-wrap::after  { right: 0; background: linear-gradient(270deg, var(--bg), transparent); }
