@@ -135,7 +135,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ./backend/api-gateway/Dockerfile
+          file: ./backend/api/Dockerfile
           push: false
           tags: api-gateway-ci:latest
 
@@ -148,7 +148,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ./backend/analyzer-service/Dockerfile
+          file: ./backend/analyzer/Dockerfile
           push: false
           tags: analyzer-service-ci:latest
 
@@ -161,7 +161,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ./backend/enrichment-service/Dockerfile
+          file: ./backend/enrichment/Dockerfile
           push: false
           tags: enrichment-service-ci:latest
 
@@ -174,7 +174,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ./backend/detector-service/Dockerfile
+          file: ./backend/detector/Dockerfile
           push: false
           tags: detector-service-ci:latest
 
@@ -294,7 +294,7 @@ jobs:
         run: |
           docker build \
             -t api-gateway-security:latest \
-            -f ./backend/api-gateway/Dockerfile \
+            -f ./backend/api/Dockerfile \
             .
 
       - name: Scan API Gateway avec Trivy
@@ -315,7 +315,7 @@ jobs:
         run: |
           docker build \
             -t analyzer-security:latest \
-            -f ./backend/analyzer-service/Dockerfile \
+            -f ./backend/analyzer/Dockerfile \
             .
 
       - name: Scan Analyzer avec Trivy
@@ -336,7 +336,7 @@ jobs:
         run: |
           docker build \
             -t enrichment-security:latest \
-            -f ./backend/enrichment-service/Dockerfile \
+            -f ./backend/enrichment/Dockerfile \
             .
 
       - name: Scan Enrichment avec Trivy
@@ -357,7 +357,7 @@ jobs:
         run: |
           docker build \
             -t detector-security:latest \
-            -f ./backend/detector-service/Dockerfile \
+            -f ./backend/detector/Dockerfile \
             .
 
       - name: Scan Detector avec Trivy
