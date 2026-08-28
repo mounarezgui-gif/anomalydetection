@@ -1,6 +1,8 @@
 // ---- Configuration ----
-export const API_URL = import.meta.env.VITE_API_URL || "https://anomalydetection-production.up.railway.app";
+export const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+export const AUTH_URL = import.meta.env.VITE_AUTH_URL || "http://localhost:8004";
 console.log("API_URL =", API_URL);
+console.log("AUTH_URL =", AUTH_URL);
 
 // ---- Session (localStorage) ----
 export function saveSession(token, user) {
@@ -37,7 +39,8 @@ export async function apiFetch(path, options = {}) {
   };
   if (token) headers["Authorization"] = `Bearer ${token}`;
 
-  const response = await fetch(`${API_URL}${path}`, { ...options, headers });
+  const base = path.startsWith("/auth") ? AUTH_URL : API_URL;
+  const response = await fetch(`${base}${path}`, { ...options, headers });
 
   if (response.status === 401 && path !== "/auth/login" && path !== "/auth/register") {
     clearSession();

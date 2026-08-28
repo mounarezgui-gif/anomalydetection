@@ -37,11 +37,14 @@ class StorageError(Exception):
 def get_collection() -> Collection:
     global _client
     if _client is None:
-        mongodb_uri = os.environ.get("MONGODB_URI_ANALYSES")
-        if not mongodb_uri:
-            raise StorageError(...)
+        mongodb_uri = (
+            os.environ.get("MONGODB_URI_ANALYSES")
+            or os.environ.get("MONGODB_URI")
+            or "mongodb://localhost:27017"
+        )
         _client = MongoClient(mongodb_uri, serverSelectionTimeoutMS=5000)
     return _client[DATABASE_NAME][COLLECTION_NAME]
+
 
 def new_analysis_id() -> str:
     return str(uuid.uuid4())

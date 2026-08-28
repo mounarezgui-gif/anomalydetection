@@ -1,0 +1,42 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+.venv/
+.env
+.env.*
+
+# Packaging
+dist/
+build/
+*.egg-info/
+
+# Tests and coverage
+tests/
+.pytest_cache/
+.tox/
+.coverage
+coverage.xml
+
+# IDEs
+.vscode/
+.idea/
+
+# Logs and temp
+*.log
+tmp/
+
+# Git
+.git
+.gitignore
+
+# Large sample files
+samples/
+*.pcap*
+*.analysis.json
+
+# Docker
+Dockerfile

@@ -21,16 +21,97 @@ services:
     networks:
       - app-network
 
-  backend:
+  api-gateway:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
-    container_name: backend
+      context: .
+      dockerfile: backend/app/api/Dockerfile
+    container_name: api-gateway
     restart: unless-stopped
     ports:
       - "8000:8000"
     environment:
       - MONGO_URI=mongodb://admin:admin123@mongodb:27017/mydb?authSource=admin
+      - MONGODB_URI_ANALYSES=mongodb://admin:admin123@mongodb:27017/mydb?authSource=admin
+      - ANALYZER_URL=http://analyzer-service:8001
+      - ENRICHMENT_URL=http://enrichment-service:8003
+      - DETECTOR_URL=http://detector-service:8002
+      - PYTHONDONTWRITEBYTECODE=1
+      - PYTHONUNBUFFERED=1
+    env_file:
+      - ./backend/.env
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      analyzer-service:
+        condition: service_started
+      detector-service:
+        condition: service_started
+      enrichment-service:
+        condition: service_started
+    volumes:
+      - ./backend:/app
+    networks:
+      - app-network
+
+  analyzer-service:
+    build:
+      context: .
+      dockerfile: backend/app/analyzer/Dockerfile
+    container_name: analyzer-service
+    restart: unless-stopped
+    ports:
+      - "8001:8001"
+    environment:
+      - PYTHONDONTWRITEBYTECODE=1
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./backend:/app
+    networks:
+      - app-network
+
+  detector-service:
+    build:
+      context: .
+      dockerfile: backend/app/detector/Dockerfile
+    container_name: detector-service
+    restart: unless-stopped
+    ports:
+      - "8002:8002"
+    environment:
+      - PYTHONDONTWRITEBYTECODE=1
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./backend:/app
+    networks:
+      - app-network
+
+  enrichment-service:
+    build:
+      context: .
+      dockerfile: backend/app/enrichment/Dockerfile
+    container_name: enrichment-service
+    restart: unless-stopped
+    ports:
+      - "8003:8003"
+    environment:
+      - PYTHONDONTWRITEBYTECODE=1
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./backend:/app
+    networks:
+      - app-network
+
+  auth-service:
+    build:
+      context: .
+      dockerfile: backend/app/auth/Dockerfile
+    container_name: auth-service
+    restart: unless-stopped
+    ports:
+      - "8004:8004"
+    environment:
+      - MONGO_URI=mongodb://admin:admin123@mongodb:27017/mydb?authSource=admin
+      - MONGODB_URI_AUTH=mongodb://admin:admin123@mongodb:27017/mydb?authSource=admin
       - PYTHONDONTWRITEBYTECODE=1
       - PYTHONUNBUFFERED=1
     env_file:
@@ -52,13 +133,10 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - API_URL=http://backend:8000
       - PORT=3000
     depends_on:
-      - backend
-    volumes:
-      - /app/node_modules
-      - ./frontend:/app
+      - api-gateway
+      - auth-service
     networks:
       - app-network
 

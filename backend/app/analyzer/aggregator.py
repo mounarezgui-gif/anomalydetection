@@ -23,10 +23,11 @@ from __future__ import annotations
 import datetime as _dt
 from collections import defaultdict
 from typing import Iterable, Optional
+
 from app.config import VT_API_KEY
 from app.enrichment.virustotal import VirusTotalClient
 
-vt_client = VirusTotalClient(VT_API_KEY)
+vt_client = VirusTotalClient(VT_API_KEY) if VT_API_KEY else None
 
 # --------------------------------------------------------------------------
 # Small utilities
