@@ -91,7 +91,7 @@ jobs:
       - name: Installer Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "24"
           cache: "npm"
           cache-dependency-path: frontend/package-lock.json
 
@@ -135,7 +135,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ./backend/api/Dockerfile
+          file: ./backend/app/api/Dockerfile
           push: false
           tags: api-gateway-ci:latest
 
@@ -148,7 +148,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ./backend/analyzer/Dockerfile
+          file: ./backend/app/analyzer/Dockerfile
           push: false
           tags: analyzer-service-ci:latest
 
@@ -161,7 +161,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ./backend/enrichment/Dockerfile
+          file: ./backend/app/enrichment/Dockerfile
           push: false
           tags: enrichment-service-ci:latest
 
@@ -174,7 +174,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ./backend/detector/Dockerfile
+          file: ./backend/app/detector/Dockerfile
           push: false
           tags: detector-service-ci:latest
 
@@ -249,7 +249,7 @@ jobs:
       - name: Installer Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "24"
           cache: "npm"
           cache-dependency-path: frontend/package-lock.json
 
@@ -294,7 +294,7 @@ jobs:
         run: |
           docker build \
             -t api-gateway-security:latest \
-            -f ./backend/api/Dockerfile \
+            -f ./backend/app/api/Dockerfile \
             .
 
       - name: Scan API Gateway avec Trivy
@@ -315,7 +315,7 @@ jobs:
         run: |
           docker build \
             -t analyzer-security:latest \
-            -f ./backend/analyzer/Dockerfile \
+            -f ./backend/app/analyzer/Dockerfile \
             .
 
       - name: Scan Analyzer avec Trivy
@@ -336,7 +336,7 @@ jobs:
         run: |
           docker build \
             -t enrichment-security:latest \
-            -f ./backend/enrichment/Dockerfile \
+            -f ./backend/app/enrichment/Dockerfile \
             .
 
       - name: Scan Enrichment avec Trivy
@@ -357,7 +357,7 @@ jobs:
         run: |
           docker build \
             -t detector-security:latest \
-            -f ./backend/detector/Dockerfile \
+            -f ./backend/app/detector/Dockerfile \
             .
 
       - name: Scan Detector avec Trivy
