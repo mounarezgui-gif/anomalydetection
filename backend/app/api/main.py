@@ -193,3 +193,10 @@ def delete_analysis(analysis_id: str) -> None:
 @app.exception_handler(StorageError)
 def handle_storage_error(request, exc: StorageError):
     return JSONResponse(status_code=503, content={"detail": str(exc)})
+@app.get("/health")
+def health() -> JSONResponse:
+    try:
+        storage.ping()
+    except StorageError as exc:
+        return JSONResponse(status_code=503, content={"status": "error", "detail": str(exc)})
+    return JSONResponse(content={"status": "ok"})

@@ -87,3 +87,9 @@ def delete_analysis(analysis_id: str) -> bool:
     except PyMongoError as exc:
         raise StorageError(f"Échec de la suppression en base : {exc}") from exc
     return result.deleted_count > 0
+def ping() -> None:
+    """Vérifie que MongoDB répond. Lève StorageError si injoignable."""
+    try:
+        get_collection().database.client.admin.command("ping")
+    except PyMongoError as exc:
+        raise StorageError(f"MongoDB injoignable : {exc}") from exc
