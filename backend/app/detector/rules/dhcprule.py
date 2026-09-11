@@ -22,7 +22,7 @@ architecture différente de celle utilisée par vos autres fichiers.
 
 from __future__ import annotations
 
-from .common import Rule, Severity, Alert
+from .common import Alert, Rule, Severity
 
 DHCP_STARVATION_MIN_DISCOVERS = 20     # DISCOVER distincts (par MAC) minimum
 DHCP_STARVATION_WINDOW_SECONDS = 30.0  # concentrés dans cette fenêtre

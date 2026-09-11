@@ -6,7 +6,7 @@ Modèles Pydantic pour les réponses de l'API.
 from datetime import datetime
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel
 
 
 class DetectionSummary(BaseModel):

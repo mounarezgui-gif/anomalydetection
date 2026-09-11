@@ -16,23 +16,25 @@ from __future__ import annotations
 
 import json
 import sys
-from typing import Iterable
+from collections.abc import Iterable
+from datetime import datetime, timezone
 from pathlib import Path
-from datetime import datetime
 
-from .rules.common import Alert, Rule
 from .rules import (
-    tcprule,
-    udprule,
+    dhcprule,
     dnsrule,
+    ftprule,
     httprule,
     httpsrule,
-    ftprule,
-    sshrule,
     icmprule,
-    dhcprule,
     portrule,
+    sshrule,
+    tcprule,
+    udprule,
 )
+from .rules.common import Alert, Rule
+
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 # Toutes les règles disponibles, peu importe le protocole : chaque règle
 # se filtre elle-même via conversation["protocols_used"] / les champs
@@ -59,7 +61,7 @@ def run_rules(conversations: Iterable[dict], rules: list[Rule] = ALL_RULES) -> l
         for rule in rules:
             try:
                 alerts.extend(rule.evaluate(conversation))
-            except Exception as exc:  # une règle ne doit jamais faire planter le moteur
+            except Exception as exc:  # noqa: BLE001
                 print(
                     f"[engine] règle '{rule.name}' en erreur sur la conversation "
                     f"{conversation.get('conversation_id')}: {exc}",
@@ -98,11 +100,18 @@ if __name__ == "__main__":
         print("Usage: python -m app.detector.engine <nom_fichier.json>")
         sys.exit(1)
 
-    # Le nom du fichier donné par l'utilisateur
-    json_path = Path("samples") / sys.argv[1]
+    input_path = Path(sys.argv[1])
+    candidates = (
+        (input_path,) if input_path.is_absolute() else (
+            Path.cwd() / input_path,
+            PROJECT_ROOT / input_path,
+            PROJECT_ROOT / "samples" / input_path,
+        )
+    )
+    json_path = next((candidate for candidate in candidates if candidate.exists()), None)
 
-    if not json_path.exists():
-        print(f"Fichier introuvable : {json_path}")
+    if json_path is None:
+        print(f"Fichier introuvable : {input_path}")
         sys.exit(1)
 
     with open(json_path, "r", encoding="utf-8") as f:
@@ -115,7 +124,7 @@ if __name__ == "__main__":
     alerts_dir.mkdir(exist_ok=True)
 
     # Nom unique basé sur la date et l'heure
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
 
     output_path = alerts_dir / f"detection_result_{timestamp}.json"
 

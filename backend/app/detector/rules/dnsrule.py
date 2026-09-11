@@ -19,7 +19,7 @@ serveur DNS comme "source" au lieu du client.
 
 from __future__ import annotations
 
-from .common import Rule, Severity, Alert
+from .common import Alert, Rule, Severity
 
 DNS_HIGH_RATE_MIN_QUERIES = 50
 DNS_HIGH_RATE_MIN_QPS = 20.0       # requêtes/seconde

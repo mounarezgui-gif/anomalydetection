@@ -1,6 +1,5 @@
 import os
 from datetime import datetime, timedelta, timezone
-from typing import Optional
 
 from bson import ObjectId
 from bson.errors import InvalidId
@@ -27,7 +26,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
 
-def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
+def create_access_token(data: dict, expires_delta: timedelta | None = None) -> str:
     to_encode = data.copy()
     expire = datetime.now(timezone.utc) + (
         expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
@@ -68,7 +67,7 @@ def require_role(*allowed_roles: str):
     Usage: Depends(require_role("admin"))
     """
 
-    async def role_checker(current_user: dict = Depends(get_current_user)) -> dict:
+    async def role_checker(current_user: dict = Depends(get_current_user)) -> dict:  # noqa: B008
         if current_user.get("role") not in allowed_roles:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,

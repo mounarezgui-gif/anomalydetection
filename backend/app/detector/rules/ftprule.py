@@ -13,7 +13,7 @@ pour le trafic identifié avec protocol == "FTP".
 
 from __future__ import annotations
 
-from .common import Rule, Severity, Alert
+from .common import Alert, Rule, Severity
 
 FTP_MANY_CONNECTIONS_MIN_STREAMS = 10
 FTP_FAILURE_MIN_RESPONSES = 5
@@ -22,12 +22,17 @@ FTP_FAILURE_MIN_RATIO = 0.5
 
 def _ftp_streams(conversation: dict) -> set[int]:
     streams: set[int] = set()
-    for p in conversation.get("packets", []):
-        if p.get("protocol") == "FTP" and p.get("tcp") and p["tcp"].get("stream") is not None:
-            if p.get("dst_port") == 21 or p.get("src_port") == 21:
-                streams.add(p["tcp"]["stream"])
-    return streams
 
+    for p in conversation.get("packets", []):
+        if (
+            p.get("protocol") == "FTP"
+            and p.get("tcp")
+            and p["tcp"].get("stream") is not None
+            and (p.get("dst_port") == 21 or p.get("src_port") == 21)
+        ):
+            streams.add(p["tcp"]["stream"])
+
+    return streams
 
 def _identify_client_and_server(responses: list[dict]) -> tuple[str | None, str | None]:
     """

@@ -17,17 +17,15 @@ vrai cluster Atlas, en monkeypatchant get_collection().
 import os
 import uuid
 from datetime import datetime, timezone
-from typing import Optional
 
 from pymongo import MongoClient
 from pymongo.collection import Collection
 from pymongo.errors import PyMongoError
 
-
 DATABASE_NAME = os.environ.get("MONGODB_DB_NAME", "network_anomaly_detector")
 COLLECTION_NAME = "analyses"
 
-_client: Optional[MongoClient] = None
+_client: MongoClient | None = None
 
 
 class StorageError(Exception):

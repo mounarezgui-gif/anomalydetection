@@ -9,9 +9,9 @@ Endpoint :
 Lancer avec : uvicorn main:app --reload --port 8002
 """
 
+from engine import analyze
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from engine import analyze
 
 app = FastAPI(
     title="Detector Service",

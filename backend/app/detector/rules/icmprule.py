@@ -18,7 +18,7 @@ et victime dans le message d'alerte.
 
 from __future__ import annotations
 
-from .common import Rule, Severity, Alert
+from .common import Alert, Rule, Severity
 
 LONG_SESSION_MIN_SECONDS = 300.0
 PING_FLOOD_MIN_PACKETS = 50

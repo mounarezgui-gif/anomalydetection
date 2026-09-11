@@ -21,8 +21,9 @@ from __future__ import annotations
 import os
 import shutil
 import subprocess
+from collections.abc import Iterator
 from dataclasses import dataclass
-from typing import Final, Iterator, Optional
+from typing import Final
 
 
 class PacketExtractionError(Exception):
@@ -165,7 +166,7 @@ TLS_CONTENT_TYPES: Final[dict[int, str]] = {
 # --------------------------------------------------------------------------
 
 
-def _safe_int(value: str) -> Optional[int]:
+def _safe_int(value: str) -> int | None:
     """Convert a TShark field value to int, returning None on failure."""
     if not value:
         return None
@@ -178,7 +179,7 @@ def _safe_int(value: str) -> Optional[int]:
         return None
 
 
-def _safe_float(value: str) -> Optional[float]:
+def _safe_float(value: str) -> float | None:
     """Convert a TShark field value to float, returning None on failure."""
     if not value:
         return None
@@ -188,7 +189,7 @@ def _safe_float(value: str) -> Optional[float]:
         return None
 
 
-def _safe_str(value: str) -> Optional[str]:
+def _safe_str(value: str) -> str | None:
     """Return a stripped string, or None if the field is empty."""
     if not value:
         return None
@@ -207,7 +208,7 @@ def _parse_tcp_flags(raw_flags: str) -> int:
         return 0
 
 
-def _detect_protocol(frame_protocols: Optional[str], transport: Optional[str]) -> str:
+def _detect_protocol(frame_protocols: str | None, transport: str | None) -> str:
     """
     Determine the application-layer protocol from the last layer in the
     frame.protocols stack (e.g. "eth:ethertype:ip:udp:quic" -> "QUIC").
@@ -230,7 +231,7 @@ def _detect_protocol(frame_protocols: Optional[str], transport: Optional[str]) -
     return "UNKNOWN"
 
 
-def _resolve_tls_protocol(src_port: Optional[int], dst_port: Optional[int]) -> str:
+def _resolve_tls_protocol(src_port: int | None, dst_port: int | None) -> str:
     """
     Identifie le protocole applicatif réel derrière une couche TLS
     générique, à partir du port connu, plutôt que de supposer HTTPS par
@@ -242,7 +243,7 @@ def _resolve_tls_protocol(src_port: Optional[int], dst_port: Optional[int]) -> s
     return "TLS"  # protocole chiffré non identifié, générique
 
 
-def _is_default_port(protocol: str, src_port: Optional[int], dst_port: Optional[int]) -> bool:
+def _is_default_port(protocol: str, src_port: int | None, dst_port: int | None) -> bool:
     """Return True if either port matches the well-known port(s) for the protocol."""
     standard_ports = DEFAULT_PORTS.get(protocol)
     if not standard_ports:
@@ -280,7 +281,7 @@ class _RawFields:
     tls_content_type: str
 
 
-def _split_line(line: str) -> Optional[_RawFields]:
+def _split_line(line: str) -> _RawFields | None:
     """Split one TSV line from TShark into a _RawFields tuple."""
     parts = line.rstrip("\n").split("\t")
     if len(parts) < len(TSHARK_FIELDS):
@@ -382,7 +383,7 @@ def _iter_tshark_lines(pcap_path: str) -> Iterator[str]:
 # --------------------------------------------------------------------------
 
 
-def _build_packet(raw: _RawFields) -> Optional[dict]:
+def _build_packet(raw: _RawFields) -> dict | None:
     """Convert one _RawFields record into the final packet dictionary."""
     frame_number = _safe_int(raw.frame_number)
     if frame_number is None:
@@ -419,7 +420,7 @@ def _build_packet(raw: _RawFields) -> Optional[dict]:
 
     default_port = _is_default_port(protocol, src_port, dst_port)
 
-    tcp_info: Optional[dict] = None
+    tcp_info: dict | None = None
     if is_tcp:
         flags_mask = _parse_tcp_flags(raw.tcp_flags)
         tcp_stream = _safe_int(raw.tcp_stream)
@@ -441,7 +442,7 @@ def _build_packet(raw: _RawFields) -> Optional[dict]:
     # --- DNS ---
     dns_is_response = _safe_str(raw.dns_is_response)
     dns_qname = _safe_str(raw.dns_qname)
-    dns_info: Optional[dict] = None
+    dns_info: dict | None = None
     if protocol == "DNS":
         dns_info = {
             "is_query": dns_is_response == "0",
@@ -452,7 +453,7 @@ def _build_packet(raw: _RawFields) -> Optional[dict]:
     # --- FTP ---
     ftp_response_code = _safe_int(raw.ftp_response_code)
     ftp_command = _safe_str(raw.ftp_request_command)
-    ftp_info: Optional[dict] = None
+    ftp_info: dict | None = None
     if protocol == "FTP":
         ftp_info = {
             "is_response": ftp_response_code is not None,
@@ -463,7 +464,7 @@ def _build_packet(raw: _RawFields) -> Optional[dict]:
     # --- HTTP ---
     http_method = _safe_str(raw.http_method)
     http_status = _safe_int(raw.http_status_code)
-    http_info: Optional[dict] = None
+    http_info: dict | None = None
     if protocol == "HTTP":
         http_info = {
             "method": http_method,
@@ -473,7 +474,7 @@ def _build_packet(raw: _RawFields) -> Optional[dict]:
     # --- TLS / HTTPS ---
     tls_handshake_code = _safe_int(raw.tls_handshake_type)
     tls_content_code = _safe_int(raw.tls_content_type)
-    tls_info: Optional[dict] = None
+    tls_info: dict | None = None
     if protocol in ("HTTPS", "MONGODB_TLS", "IMAPS", "POP3S", "SMTPS", "LDAPS", "TLS"):
         tls_info = {
             "handshake_type": TLS_HANDSHAKE_TYPES.get(tls_handshake_code),

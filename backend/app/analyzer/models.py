@@ -19,8 +19,7 @@ Compatible with Python 3.11+.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
-
+from typing import Any
 
 # ============================================================================
 # TCP sub-models
@@ -35,7 +34,7 @@ class HandshakeInfo:
     ack_seen: bool = False
     completed: bool = False
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "syn_seen": self.syn_seen,
             "syn_ack_seen": self.syn_ack_seen,
@@ -44,7 +43,7 @@ class HandshakeInfo:
         }
 
     @classmethod
-    def from_dict(cls, data: Optional[Dict[str, Any]]) -> "HandshakeInfo":
+    def from_dict(cls, data: dict[str, Any] | None) -> HandshakeInfo:
         data = data or {}
         return cls(
             syn_seen=bool(data.get("syn_seen", False)),
@@ -58,14 +57,14 @@ class HandshakeInfo:
 class TCPInfo:
     """Per-packet TCP details: flags + handshake state of its stream."""
 
-    stream: Optional[int] = None
+    stream: int | None = None
     syn: bool = False
     ack: bool = False
     fin: bool = False
     rst: bool = False
-    handshake: Optional[HandshakeInfo] = None
+    handshake: HandshakeInfo | None = None
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "stream": self.stream,
             "syn": self.syn,
@@ -76,7 +75,7 @@ class TCPInfo:
         }
 
     @classmethod
-    def from_dict(cls, data: Optional[Dict[str, Any]]) -> Optional["TCPInfo"]:
+    def from_dict(cls, data: dict[str, Any] | None) -> TCPInfo | None:
         if not data:
             return None
         return cls(
@@ -98,20 +97,20 @@ class PacketRecord:
     """One packet, as found inside a conversation's "packets" list."""
 
     packet_number: int
-    timestamp: Optional[float]
-    relative_time: Optional[float]
-    src_ip: Optional[str]
-    dst_ip: Optional[str]
-    src_port: Optional[int]
-    dst_port: Optional[int]
+    timestamp: float | None
+    relative_time: float | None
+    src_ip: str | None
+    dst_ip: str | None
+    src_port: int | None
+    dst_port: int | None
     protocol: str
     length_bytes: int
     length_bits: int
     default_port: bool
-    tcp: Optional[TCPInfo] = None
-    timestamp_iso: Optional[str] = None
+    tcp: TCPInfo | None = None
+    timestamp_iso: str | None = None
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "packet_number": self.packet_number,
             "timestamp": self.timestamp,
@@ -129,7 +128,7 @@ class PacketRecord:
         }
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "PacketRecord":
+    def from_dict(cls, data: dict[str, Any]) -> PacketRecord:
         """Build a PacketRecord from one packet dict as produced by aggregator.py."""
         return cls(
             packet_number=data.get("packet_number", 0) or 0,
@@ -159,17 +158,17 @@ class ConversationRecord:
     conversation_id: int
     ip_a: str
     ip_b: str
-    ports: List[int] = field(default_factory=list)
+    ports: list[int] = field(default_factory=list)
     total_packets: int = 0
     total_bytes: int = 0
     total_bits: int = 0
-    protocols_used: List[str] = field(default_factory=list)
-    start_time: Optional[str] = None
-    end_time: Optional[str] = None
+    protocols_used: list[str] = field(default_factory=list)
+    start_time: str | None = None
+    end_time: str | None = None
     duration: float = 0.0
-    packets: List[PacketRecord] = field(default_factory=list)
+    packets: list[PacketRecord] = field(default_factory=list)
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "conversation_id": self.conversation_id,
             "ip_a": self.ip_a,
@@ -186,7 +185,7 @@ class ConversationRecord:
         }
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "ConversationRecord":
+    def from_dict(cls, data: dict[str, Any]) -> ConversationRecord:
         """Build a ConversationRecord from one entry of aggregator.py's "conversations"."""
         return cls(
             conversation_id=data.get("conversation_id", 0) or 0,
@@ -219,12 +218,12 @@ class CaptureSummary:
     total_conversations: int = 0
     total_bytes: int = 0
     total_bits: int = 0
-    protocols: List[str] = field(default_factory=list)
-    start_time: Optional[str] = None
-    end_time: Optional[str] = None
+    protocols: list[str] = field(default_factory=list)
+    start_time: str | None = None
+    end_time: str | None = None
     duration: float = 0.0
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "total_packets": self.total_packets,
             "total_conversations": self.total_conversations,
@@ -237,7 +236,7 @@ class CaptureSummary:
         }
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "CaptureSummary":
+    def from_dict(cls, data: dict[str, Any]) -> CaptureSummary:
         return cls(
             total_packets=data.get("total_packets", 0) or 0,
             total_conversations=data.get("total_conversations", 0) or 0,
@@ -259,16 +258,16 @@ class PcapAnalysisResult:
     """Full result of aggregate_packets(): capture_summary + conversations."""
 
     capture_summary: CaptureSummary
-    conversations: List[ConversationRecord] = field(default_factory=list)
+    conversations: list[ConversationRecord] = field(default_factory=list)
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "capture_summary": self.capture_summary.to_dict(),
             "conversations": [conversation.to_dict() for conversation in self.conversations],
         }
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "PcapAnalysisResult":
+    def from_dict(cls, data: dict[str, Any]) -> PcapAnalysisResult:
         """Build a PcapAnalysisResult from the raw dict returned by aggregate_packets()."""
         return cls(
             capture_summary=CaptureSummary.from_dict(data.get("capture_summary") or {}),
@@ -284,10 +283,10 @@ class PcapAnalysisResult:
 # ============================================================================
 
 __all__ = [
-    "HandshakeInfo",
-    "TCPInfo",
-    "PacketRecord",
-    "ConversationRecord",
     "CaptureSummary",
+    "ConversationRecord",
+    "HandshakeInfo",
+    "PacketRecord",
     "PcapAnalysisResult",
+    "TCPInfo",
 ]

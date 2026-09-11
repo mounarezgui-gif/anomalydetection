@@ -7,11 +7,11 @@ extractor.py et aggregator.py exposent chacun une seule fonction publique
 reste volontairement simple, sans état à instancier.
 """
 
-from .extractor import (
-    extract_packets,
-    PacketExtractionError,
-)
 from .aggregator import aggregate_packets
+from .extractor import (
+    PacketExtractionError,
+    extract_packets,
+)
 from .models import (
     CaptureSummary,
     ConversationRecord,
@@ -22,16 +22,13 @@ from .models import (
 )
 
 __all__ = [
-    # Extraction (extractor.py)
-    "extract_packets",
-    "PacketExtractionError",
-    # Agrégation (aggregator.py)
-    "aggregate_packets",
-    # Modèles (models.py)
-    "PcapAnalysisResult",
     "CaptureSummary",
     "ConversationRecord",
-    "PacketRecord",
-    "TCPInfo",
     "HandshakeInfo",
+    "PacketExtractionError",
+    "PacketRecord",
+    "PcapAnalysisResult",
+    "TCPInfo",
+    "aggregate_packets",
+    "extract_packets",
 ]

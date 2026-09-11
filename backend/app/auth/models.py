@@ -1,5 +1,6 @@
-from pydantic import BaseModel, EmailStr, Field
 from typing import Literal
+
+from pydantic import BaseModel, EmailStr, Field
 
 
 class UserRegister(BaseModel):

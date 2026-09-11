@@ -20,7 +20,7 @@ from collections import Counter
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 # L'API réelle exposée par le package : deux fonctions, pas de classes.
-from app.analyzer import extract_packets, aggregate_packets, PacketExtractionError
+from app.analyzer import PacketExtractionError, aggregate_packets, extract_packets
 
 
 def default_output_path(pcap_file: str) -> str:
@@ -135,7 +135,7 @@ def main() -> None:
 
     except PacketExtractionError as e:
         print(f"\n❌ Erreur d'extraction TShark : {e}")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         print(f"\n❌ Erreur pendant l'exécution : {e}")
         import traceback
         traceback.print_exc()

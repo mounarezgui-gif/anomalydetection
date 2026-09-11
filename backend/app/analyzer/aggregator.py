@@ -22,7 +22,7 @@ from __future__ import annotations
 
 import datetime as _dt
 from collections import defaultdict
-from typing import Iterable, Optional
+from collections.abc import Iterable
 
 from app.config import VT_API_KEY
 from app.enrichment.virustotal import VirusTotalClient
@@ -34,7 +34,7 @@ vt_client = VirusTotalClient(VT_API_KEY) if VT_API_KEY else None
 # --------------------------------------------------------------------------
 
 
-def _to_iso(timestamp: Optional[float]) -> Optional[str]:
+def _to_iso(timestamp: float | None) -> str | None:
     """Convert a UNIX epoch timestamp to an ISO-8601 UTC string."""
     if timestamp is None:
         return None
@@ -48,7 +48,7 @@ def _to_iso(timestamp: Optional[float]) -> Optional[str]:
         return None
 
 
-def _conversation_key(src_ip: Optional[str], dst_ip: Optional[str]) -> Optional[tuple[str, str]]:
+def _conversation_key(src_ip: str | None, dst_ip: str | None) -> tuple[str, str] | None:
     """
     Build a direction-independent key for a conversation.
 
@@ -185,8 +185,8 @@ def _build_conversation(
     ports: set[int] = set()
     protocols_used: set[str] = set()
     total_bytes = 0
-    start_time: Optional[float] = None
-    end_time: Optional[float] = None
+    start_time: float | None = None
+    end_time: float | None = None
 
     formatted_packets: list[dict] = []
 

@@ -116,7 +116,7 @@ async def _call_service(service_name: str, endpoint: str, *, json_body: dict | N
     responses={400: {"model": ErrorResponse}, 422: {"model": ErrorResponse}},
     summary="Analyse un fichier PCAP via le pipeline distribué",
 )
-async def create_analysis(file: UploadFile = File(...)) -> AnalysisDetail:
+async def create_analysis(file: UploadFile = File(...)) -> AnalysisDetail:  # noqa: B008
     content = await file.read()
     if not content:
         raise HTTPException(status_code=400, detail="Fichier vide.")

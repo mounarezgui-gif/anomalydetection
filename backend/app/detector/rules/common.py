@@ -26,7 +26,6 @@ Compatible Python 3.11+.
 from __future__ import annotations
 
 from enum import Enum
-from typing import Optional
 
 from ..alert import make_alert
 
@@ -77,9 +76,9 @@ class Rule:
         conversation: dict,
         description: str,
         severity: Severity,
-        evidence: Optional[dict] = None,
-        packet_number: Optional[int] = None,
-        cible: Optional[str] = None,
+        evidence: dict | None = None,
+        packet_number: int | None = None,
+        cible: str | None = None,
     ) -> Alert:
         """Raccourci pour construire une alerte au format standard alert.make_alert()."""
         target = cible or conversation.get("ip_b") or conversation.get("ip_a")

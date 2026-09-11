@@ -22,7 +22,7 @@ aggregator.py) et peuvent inverser client et serveur dans le message.
 
 from __future__ import annotations
 
-from .common import Rule, Severity, Alert
+from .common import Alert, Rule, Severity
 
 # Doit rester synchronisé avec extractor.DEFAULT_PORTS : uniquement les
 # noms de protocoles pour lesquels un port standard existe et pour

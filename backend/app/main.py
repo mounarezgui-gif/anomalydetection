@@ -70,6 +70,6 @@ if __name__ == "__main__":
     except PacketExtractionError as exc:
         print(f"Erreur d'extraction TShark : {exc}")
         sys.exit(1)
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001
         print(f"Erreur pendant l'exécution : {exc}")
         sys.exit(1)

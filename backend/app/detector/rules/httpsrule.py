@@ -14,7 +14,7 @@ pour le trafic identifié avec protocol == "HTTPS".
 
 from __future__ import annotations
 
-from .common import Rule, Severity, Alert
+from .common import Alert, Rule, Severity
 
 LONG_SESSION_MIN_SECONDS = 300.0
 HIGH_VOLUME_MIN_BYTES = 50_000_000

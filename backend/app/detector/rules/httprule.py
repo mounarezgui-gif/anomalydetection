@@ -20,7 +20,7 @@ from __future__ import annotations
 
 from collections import Counter
 
-from .common import Rule, Severity, Alert
+from .common import Alert, Rule, Severity
 
 HTTP_FLOOD_MIN_REQUESTS = 100
 HTTP_FLOOD_MIN_RPS = 20.0

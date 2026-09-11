@@ -26,7 +26,7 @@ ALLOWED_EXTENSIONS = {".pcap", ".pcapng"}
 
 
 @app.post("/extract", summary="Extrait et agrège les paquets d'un fichier PCAP")
-async def extract_and_aggregate(file: UploadFile = File(...)) -> JSONResponse:
+async def extract_and_aggregate(file: UploadFile = File(...)) -> JSONResponse:  # noqa: B008
     suffix = Path(file.filename or "").suffix.lower()
     if suffix not in ALLOWED_EXTENSIONS:
         raise HTTPException(

@@ -1,15 +1,21 @@
 from bson import ObjectId
+from fastapi import APIRouter, Depends, HTTPException, status
 from pymongo import ReturnDocument
-from fastapi import APIRouter, HTTPException, Depends, status
 
 from app.auth.database import users_collection
-from app.auth.models import UserRegister, UserLogin, UserOut, TokenResponse, UserUpdateRole
+from app.auth.models import (
+    TokenResponse,
+    UserLogin,
+    UserOut,
+    UserRegister,
+    UserUpdateRole,
+)
 from app.auth.security import (
-    hash_password,
-    verify_password,
     create_access_token,
     get_current_user,
+    hash_password,
     require_role,
+    verify_password,
 )
 
 router = APIRouter(prefix="/auth", tags=["Authentification"])
@@ -54,14 +60,14 @@ async def login(payload: UserLogin):
 
 
 @router.get("/me", response_model=UserOut)
-async def get_me(current_user: dict = Depends(get_current_user)):
+async def get_me(current_user: dict = Depends(get_current_user)):  # noqa: B008
     return user_doc_to_out(current_user)
 
 
 # ---- Routes réservées à l'admin ----
 
 @router.get("/users", response_model=list[UserOut])
-async def list_users(current_user: dict = Depends(require_role("admin"))):
+async def list_users(current_user: dict = Depends(require_role("admin"))):  # noqa: B008
     users = await users_collection.find().to_list(length=500)
     return [user_doc_to_out(u) for u in users]
 
@@ -70,7 +76,7 @@ async def list_users(current_user: dict = Depends(require_role("admin"))):
 async def update_user_role(
     user_id: str,
     payload: UserUpdateRole,
-    current_user: dict = Depends(require_role("admin")),
+    current_user: dict = Depends(require_role("admin")),  # noqa: B008
 ):
     result = await users_collection.find_one_and_update(
         {"_id": ObjectId(user_id)},

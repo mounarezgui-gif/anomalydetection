@@ -7,8 +7,6 @@ installé) sur un pcap de test réel.
 
 import io
 
-import pytest
-
 
 class TestListAnalyses:
     def test_empty_list_when_no_analysis(self, client):

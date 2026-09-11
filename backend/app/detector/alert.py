@@ -14,8 +14,6 @@ stockées/affichées ensemble.
 from __future__ import annotations
 
 from datetime import datetime, timezone
-from typing import Optional
-
 
 # Sévérités valides, du moins grave au plus grave.
 SEVERITY_LEVELS = ["INFO", "WARNING", "SUSPICIOUS", "CRITICAL"]
@@ -27,9 +25,9 @@ def make_alert(
     cible: str,
     severite: str,
     description: str,
-    details: Optional[dict] = None,
-    conversation_id: Optional[int] = None,
-    packet_number: Optional[int] = None,
+    details: dict | None = None,
+    conversation_id: int | None = None,
+    packet_number: int | None = None,
 ) -> dict:
     """
     Construit une alerte au format standard.

@@ -4,6 +4,7 @@ Lance ce script une fois pour créer le compte admin :
 """
 import asyncio
 import os
+
 from dotenv import load_dotenv
 
 from app.auth.database import users_collection

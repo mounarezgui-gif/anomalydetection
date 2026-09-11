@@ -9,7 +9,7 @@ Règles comportementales UDP :
 
 from __future__ import annotations
 
-from .common import Rule, Severity, Alert
+from .common import Alert, Rule, Severity
 
 UDP_FLOOD_MIN_PACKETS = 100
 UDP_FLOOD_MIN_PPS = 50.0          # paquets/seconde

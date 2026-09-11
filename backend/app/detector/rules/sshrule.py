@@ -15,7 +15,7 @@ connexion), donc pas besoin d'un champ "ssh" applicatif dédié.
 
 from __future__ import annotations
 
-from .common import Rule, Severity, Alert
+from .common import Alert, Rule, Severity
 
 SSH_PORT = 22
 SHORT_SESSION_MAX_SECONDS = 2.0     # une session SSH légitime dure rarement < 2s

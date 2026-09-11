@@ -15,9 +15,7 @@ jamais depuis ip_a/ip_b de la conversation (sans direction garantie).
 
 from __future__ import annotations
 
-from collections import defaultdict
-
-from .common import Rule, Severity, Alert
+from .common import Alert, Rule, Severity
 
 SYN_FLOOD_MIN_SYN = 20
 SYN_FLOOD_MAX_WINDOW_SECONDS = 5.0
