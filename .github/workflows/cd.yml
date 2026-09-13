@@ -1,0 +1,34 @@
+name: CD
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types:
+      - completed
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy to Render
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: Deploy analyzer-service
+        run: curl --fail --show-error --silent --retry 5 --retry-delay 3 --retry-all-errors -X POST "${{ secrets.RENDER_DEPLOY_HOOK_ANALYZER }}"
+
+      - name: Deploy detector-service
+        run: curl --fail --show-error --silent --retry 5 --retry-delay 3 --retry-all-errors -X POST "${{ secrets.RENDER_DEPLOY_HOOK_DETECTOR }}"
+
+      - name: Deploy enrichment-service
+        run: curl --fail --show-error --silent --retry 5 --retry-delay 3 --retry-all-errors -X POST "${{ secrets.RENDER_DEPLOY_HOOK_ENRICHMENT }}"
+
+      - name: Deploy auth-service
+        run: curl --fail --show-error --silent --retry 5 --retry-delay 3 --retry-all-errors -X POST "${{ secrets.RENDER_DEPLOY_HOOK_AUTH }}"
+
+      - name: Deploy api-gateway
+        run: curl --fail --show-error --silent --retry 5 --retry-delay 3 --retry-all-errors -X POST "${{ secrets.RENDER_DEPLOY_HOOK_API_GATEWAY }}"
+
+      - name: Deploy frontend
+        run: curl --fail --show-error --silent --retry 5 --retry-delay 3 --retry-all-errors -X POST "${{ secrets.RENDER_DEPLOY_HOOK_FRONTEND }}"
