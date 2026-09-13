@@ -1,4 +1,6 @@
-import urllib.request, json
+import json
+import urllib.error
+import urllib.request
 
 for action in ('register','login'):
     if action=='register':
@@ -12,5 +14,5 @@ for action in ('register','login'):
     try:
         resp=urllib.request.urlopen(req)
         print(action.upper(), resp.status, resp.read().decode())
-    except Exception as e:
+    except urllib.error.URLError as e:
         print(action.upper(),'ERROR', e)

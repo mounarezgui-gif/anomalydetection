@@ -1,6 +1,6 @@
 // ---- Configuration ----
-export const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
-export const AUTH_URL = import.meta.env.VITE_AUTH_URL || "http://localhost:8004";
+export const API_URL = import.meta.env.VITE_API_URL || "https://api-gateway-latest-b1q4.onrender.com";
+export const AUTH_URL = import.meta.env.VITE_AUTH_URL || "https://auth-service-latest-xbgc.onrender.com";
 console.log("API_URL =", API_URL);
 console.log("AUTH_URL =", AUTH_URL);
 
