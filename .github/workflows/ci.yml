@@ -60,13 +60,19 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install --timeout 120 --retries 5 -r requirements.txt
-          pip install ruff
+          pip install ruff bandit
 
 
       # Lint avec Ruff
       - name: Lint - Ruff
         run: |
           ruff check .
+
+
+      # SAST - Bandit (analyse statique du code Python)
+      - name: SAST - Bandit
+        run: |
+          bandit -r . -ll -x ./tests
 
 
       # Lancer les tests
@@ -116,10 +122,128 @@ jobs:
 
 
   # ==========================================================
-  # JOB 3 : Docker - Build & publication GHCR
+  # JOB 3 : Sécurité - Secrets (Gitleaks)
+  # ==========================================================
+  # Scanne le code (et l'historique) à la recherche de secrets
+  # committés par erreur : clés API, tokens, mots de passe...
+  # Job indépendant, exécuté le plus tôt possible.
+  # ==========================================================
+
+  security-secrets:
+    name: Sécurité - Détection de secrets (Gitleaks)
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+
+      - name: Scanner avec Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
+  # ==========================================================
+  # JOB 4 : Sécurité - SAST multi-langage (Semgrep)
+  # ==========================================================
+  # Analyse statique du code backend ET frontend : injections,
+  # failles OWASP Top 10, mauvaises pratiques de sécurité.
+  # ==========================================================
+
+  security-sast:
+    name: Sécurité - SAST (Semgrep)
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+
+      - name: Scanner avec Semgrep
+        uses: semgrep/semgrep-action@v1
+        with:
+          config: >-
+            p/security-audit
+            p/secrets
+            p/owasp-top-ten
+
+
+  # ==========================================================
+  # JOB 5 : Sécurité - Lint des Dockerfiles (Hadolint)
+  # ==========================================================
+  # Vérifie les bonnes pratiques de sécurité dans chaque
+  # Dockerfile (utilisateur non-root, versions figées, etc.)
+  # ==========================================================
+
+  security-dockerfile-lint:
+    name: Sécurité - Lint Dockerfiles (Hadolint)
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        include:
+          - name: API Gateway
+            dockerfile: backend/app/api/Dockerfile
+          - name: Analyzer Service
+            dockerfile: backend/app/analyzer/Dockerfile
+          - name: Enrichment Service
+            dockerfile: backend/app/enrichment/Dockerfile
+          - name: Detector Service
+            dockerfile: backend/app/detector/Dockerfile
+          - name: Auth Service
+            dockerfile: backend/app/auth/Dockerfile
+          - name: Frontend
+            dockerfile: frontend/Dockerfile
+
+    steps:
+
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+
+      - name: Hadolint - ${{ matrix.name }}
+        uses: hadolint/hadolint-action@v3.1.0
+        continue-on-error: true
+        with:
+          dockerfile: ${{ matrix.dockerfile }}
+          failure-threshold: warning
+
+
+  # ==========================================================
+  # JOB 6 : Sécurité - Dependency Review (PR uniquement)
+  # ==========================================================
+  # Bloque les PR qui introduisent une dépendance avec une
+  # vulnérabilité connue de sévérité élevée.
+  # ==========================================================
+
+  security-dependency-review:
+    name: Sécurité - Dependency Review
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+
+    steps:
+
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+
+      - name: Dependency Review
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high
+
+
+  # ==========================================================
+  # JOB 7 : Docker - Build & publication GHCR
   # ==========================================================
   # - Sur PR : build local uniquement (push: false), sert de vérification.
   # - Sur push vers main : build + push vers ghcr.io.
+  # Génère aussi un SBOM (inventaire des composants) par image.
   # Adapte le nom d'utilisateur/organisation GHCR si besoin (par défaut :
   # ghcr.io/<owner>/<repo>/<service>).
   # ==========================================================
@@ -131,6 +255,7 @@ jobs:
     needs:
       - backend-test
       - frontend-build
+      - security-secrets
 
     permissions:
       contents: read
@@ -173,12 +298,19 @@ jobs:
           context: .
           file: ./backend/app/api/Dockerfile
           push: ${{ env.PUSH == 'true' }}
+          load: ${{ env.PUSH != 'true' }}
           tags: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAMESPACE }}/api-gateway:latest
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAMESPACE }}/api-gateway:${{ github.sha }}
           cache-from: type=gha,scope=api-gateway
           cache-to: type=gha,mode=max,scope=api-gateway
-          outputs: ${{ env.PUSH == 'true' && 'type=registry' || 'type=docker' }}
+
+      - name: SBOM - API Gateway
+        uses: anchore/sbom-action@v0
+        continue-on-error: true
+        with:
+          image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAMESPACE }}/api-gateway:${{ github.sha }}
+          output-file: sbom-api-gateway.spdx.json
 
 
       # ------------------------------------------------------
@@ -191,12 +323,19 @@ jobs:
           context: .
           file: ./backend/app/analyzer/Dockerfile
           push: ${{ env.PUSH == 'true' }}
+          load: ${{ env.PUSH != 'true' }}
           tags: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAMESPACE }}/analyzer-service:latest
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAMESPACE }}/analyzer-service:${{ github.sha }}
           cache-from: type=gha,scope=analyzer-service
           cache-to: type=gha,mode=max,scope=analyzer-service
-          outputs: ${{ env.PUSH == 'true' && 'type=registry' || 'type=docker' }}
+
+      - name: SBOM - Analyzer Service
+        uses: anchore/sbom-action@v0
+        continue-on-error: true
+        with:
+          image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAMESPACE }}/analyzer-service:${{ github.sha }}
+          output-file: sbom-analyzer-service.spdx.json
 
 
       # ------------------------------------------------------
@@ -209,12 +348,19 @@ jobs:
           context: .
           file: ./backend/app/enrichment/Dockerfile
           push: ${{ env.PUSH == 'true' }}
+          load: ${{ env.PUSH != 'true' }}
           tags: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAMESPACE }}/enrichment-service:latest
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAMESPACE }}/enrichment-service:${{ github.sha }}
           cache-from: type=gha,scope=enrichment-service
           cache-to: type=gha,mode=max,scope=enrichment-service
-          outputs: ${{ env.PUSH == 'true' && 'type=registry' || 'type=docker' }}
+
+      - name: SBOM - Enrichment Service
+        uses: anchore/sbom-action@v0
+        continue-on-error: true
+        with:
+          image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAMESPACE }}/enrichment-service:${{ github.sha }}
+          output-file: sbom-enrichment-service.spdx.json
 
 
       # ------------------------------------------------------
@@ -227,12 +373,19 @@ jobs:
           context: .
           file: ./backend/app/detector/Dockerfile
           push: ${{ env.PUSH == 'true' }}
+          load: ${{ env.PUSH != 'true' }}
           tags: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAMESPACE }}/detector-service:latest
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAMESPACE }}/detector-service:${{ github.sha }}
           cache-from: type=gha,scope=detector-service
           cache-to: type=gha,mode=max,scope=detector-service
-          outputs: ${{ env.PUSH == 'true' && 'type=registry' || 'type=docker' }}
+
+      - name: SBOM - Detector Service
+        uses: anchore/sbom-action@v0
+        continue-on-error: true
+        with:
+          image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAMESPACE }}/detector-service:${{ github.sha }}
+          output-file: sbom-detector-service.spdx.json
 
 
       # ------------------------------------------------------
@@ -245,12 +398,19 @@ jobs:
           context: .
           file: ./backend/app/auth/Dockerfile
           push: ${{ env.PUSH == 'true' }}
+          load: ${{ env.PUSH != 'true' }}
           tags: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAMESPACE }}/auth-service:latest
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAMESPACE }}/auth-service:${{ github.sha }}
           cache-from: type=gha,scope=auth-service
           cache-to: type=gha,mode=max,scope=auth-service
-          outputs: ${{ env.PUSH == 'true' && 'type=registry' || 'type=docker' }}
+
+      - name: SBOM - Auth Service
+        uses: anchore/sbom-action@v0
+        continue-on-error: true
+        with:
+          image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAMESPACE }}/auth-service:${{ github.sha }}
+          output-file: sbom-auth-service.spdx.json
 
 
       # ------------------------------------------------------
@@ -263,16 +423,35 @@ jobs:
           context: ./frontend
           file: ./frontend/Dockerfile
           push: ${{ env.PUSH == 'true' }}
+          load: ${{ env.PUSH != 'true' }}
           tags: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAMESPACE }}/frontend:latest
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAMESPACE }}/frontend:${{ github.sha }}
           cache-from: type=gha,scope=frontend
           cache-to: type=gha,mode=max,scope=frontend
-          outputs: ${{ env.PUSH == 'true' && 'type=registry' || 'type=docker' }}
+
+      - name: SBOM - Frontend
+        uses: anchore/sbom-action@v0
+        continue-on-error: true
+        with:
+          image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAMESPACE }}/frontend:${{ github.sha }}
+          output-file: sbom-frontend.spdx.json
+
+
+      # ------------------------------------------------------
+      # Publication des SBOM en artefacts du workflow
+      # ------------------------------------------------------
+
+      - name: Publier les SBOM
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom-reports
+          path: sbom-*.spdx.json
+          retention-days: 30
 
 
   # ==========================================================
-  # JOB 4 : Health check - Vérification des services au démarrage
+  # JOB 8 : Health check - Vérification des services au démarrage
   # ==========================================================
   # Lance la stack via docker-compose (à adapter si le fichier
   # s'appelle différemment) et vérifie que chaque service répond
@@ -337,7 +516,7 @@ jobs:
 
 
   # ==========================================================
-  # JOB 5 : Sécurité - Dépendances Python
+  # JOB 9 : Sécurité - Dépendances Python
   # ==========================================================
 
   security-python:
@@ -373,7 +552,7 @@ jobs:
 
 
   # ==========================================================
-  # JOB 6 : Sécurité - Dépendances Node
+  # JOB 10 : Sécurité - Dépendances Node
   # ==========================================================
 
   security-node:
@@ -409,7 +588,7 @@ jobs:
 
 
   # ==========================================================
-  # JOB 7 : Sécurité - Images Docker
+  # JOB 11 : Sécurité - Images Docker
   # ==========================================================
 
   security-docker:

@@ -1,170 +1,277 @@
-# Moteur d'analyse réseau - Extraction, agrégation et analyse fenêtrée par protocole
+# Network Anomaly Detection Platform
 
-Ce livrable contient uniquement l'extraction, l'agrégation (globale ET
-fenêtrée par protocole) et le suivi des handshakes TCP. Pas de moteur
-de règles, pas de FastAPI, pas de base de données, pas de Docker.
+This project is a full-stack network traffic analysis and anomaly detection system designed to detect suspicious communication patterns from PCAP files and present the results through a web interface. It combines packet extraction, protocol-based aggregation, rule-based detection, alert generation, authentication, and a dashboard for monitoring security events.
 
-## Structure
+## Project objective
 
+The main objective of this project is to build an intelligent monitoring system capable of:
+
+- capturing and analyzing network traffic from PCAP/PCAPNG files,
+- extracting relevant metadata for protocols such as TCP, UDP, DNS, HTTP, ICMP, and TLS,
+- aggregating traffic statistics over time windows,
+- detecting abnormal behaviors based on network rules,
+- storing results and alerts,
+- exposing the system through a web application and REST API,
+- allowing authenticated users to manage and consult analyses.
+
+This system is relevant for network monitoring, intrusion detection, and cybersecurity analysis in a modern and modular architecture.
+
+---
+
+## Main features
+
+- Packet extraction using TShark and Python-based parsing
+- Traffic aggregation at global and per-protocol levels
+- Temporal window analysis for detecting patterns over time
+- TCP handshake tracking to identify incomplete or suspicious sessions
+- Rule-based detector for abnormal behaviors and suspicious traffic
+- Structured JSON alert output for each analysis
+- Backend APIs for analysis and authentication
+- MongoDB persistence for analysis and authentication data
+- Frontend dashboard to visualize alerts and results
+- Docker-based deployment for all services
+
+---
+
+## System architecture
+
+```mermaid
+flowchart LR
+    User[User] --> Frontend[Frontend React App]
+    Frontend --> API[API Gateway / FastAPI]
+    API --> Analyzer[Analyzer Service]
+    API --> Detector[Detector Service]
+    API --> Auth[Auth Service]
+    API --> Mongo[(MongoDB)]
+    Analyzer --> PCAP[PCAP / PCAPNG Files]
+    Detector --> Alerts[Alerts & Detection Results]
+    Enrichment[Enrichment Service] --> API
 ```
-backend/
-├── app/
-│   ├── __init__.py
-│   └── analyzer/
-│       ├── __init__.py
-│       ├── models.py          # Toutes les structures de données (voir plus bas)
-│       ├── extractor.py        # Lecture PCAP/PCAPNG avec PyShark, normalisation UTC
-│       ├── aggregator.py       # Agrégation globale ET fenêtrée par protocole
-│       └── tcp_handshake.py    # Suivi d'état des handshakes TCP (SYN_SENT -> ESTABLISHED)
-├── test.py                     # Script CLI de validation
+
+The architecture is modular and based on independent services:
+
+- Analyzer: packet parsing and extraction
+- Detector: anomaly detection rules
+- Enrichment: data enrichment and contextualization
+- API Gateway: central access layer
+- Auth Service: user authentication and authorization
+- Frontend: web interface for users
+- MongoDB: persistent storage for results and profiles
+
+---
+
+## Technologies used
+
+### Backend
+- Python
+- FastAPI
+- PyShark
+- MongoDB
+- Pydantic
+- Docker
+
+### Frontend
+- React
+- Vite
+- JavaScript / JSX
+- Express (for server rendering / production serving)
+
+### Infrastructure
+- Docker Compose
+- Kubernetes manifests in the k8s folder
+
+---
+
+## Project structure
+
+```text
+anomalydetection/
+├── backend/
+│   ├── app/
+│   │   ├── analyzer/
+│   │   │   ├── extractor.py
+│   │   │   ├── aggregator.py
+│   │   │   ├── models.py
+│   │   │   └── main.py
+│   │   ├── api/
+│   │   │   ├── main.py
+│   │   │   ├── storage.py
+│   │   │   └── schemas.py
+│   │   ├── auth/
+│   │   │   ├── main.py
+│   │   │   ├── routes.py
+│   │   │   ├── security.py
+│   │   │   └── models.py
+│   │   ├── detector/
+│   │   │   ├── engine.py
+│   │   │   ├── alert.py
+│   │   │   └── rules/
+│   │   ├── enrichment/
+│   │   └── main.py
+│   ├── samples/
+│   ├── tests/
+│   ├── requirements.txt
+│   └── README.md
+├── frontend/
+│   ├── src/
+│   ├── package.json
+│   ├── vite.config.js
+│   └── server.js
+├── k8s/
+├── docker-compose.yml
 ├── requirements.txt
+├── .gitignore
 ├── README.md
-└── samples/
-    ├── example_capture.pcap         # Scan de ports + rafale ICMP
-    └── multi_protocol_test.pcap     # TCP complet/bloqué, DNS échoué, HTTP 404, ICMP
+└── scripts/
 ```
 
-## Prérequis système
+---
 
-TShark doit être installé (PyShark s'appuie dessus) :
+## Workflow of the system
+
+1. The user uploads or selects a PCAP file.
+2. The analyzer extracts packets and protocol metadata.
+3. Data is aggregated by protocol and time window.
+4. The detector applies rules to identify suspicious behavior.
+5. Alerts are generated with severity levels, evidence, and metadata.
+6. Results are stored in MongoDB and exposed through APIs.
+7. The frontend displays the analysis and alert information to the user.
+
+---
+
+## Detection logic
+
+The project detects abnormal patterns such as:
+
+- incomplete TCP handshakes,
+- unusual or suspicious port activity,
+- DNS anomalies,
+- HTTP errors and abnormal requests,
+- ICMP flood-like activity,
+- TLS interruptions,
+- malformed or risky network conversations.
+
+Detection is performed using rule-based evaluation over structured traffic conversations generated by the analyzer. This allows the system to produce meaningful alerts instead of only raw packet summaries.
+
+---
+
+## Installation and setup
+
+### Prerequisites
+
+- Python 3.10+
+- Node.js and npm
+- Docker and Docker Compose
+- TShark (required for packet extraction)
+
+### Option 1: Run with Docker
 
 ```bash
-sudo apt install tshark          # Linux
-# ou installer Wireshark sous Windows (inclut TShark), puis vérifier
-# qu'il est bien dans le PATH système
+docker compose up --build
 ```
 
-## Installation
+This starts:
+
+- MongoDB
+- API gateway
+- Analyzer service
+- Detector service
+- Enrichment service
+- Auth service
+- Frontend
+
+### Option 2: Local development setup
+
+```bash
+# Backend
+python -m venv .venv
+source .venv/bin/activate   # On Windows: .venv\Scripts\activate
+pip install -r backend/requirements.txt
+
+# Frontend
+cd frontend
+npm install
+npm run dev
+```
+
+> Note: TShark must be installed and accessible from the system PATH so the packet extractor can read .pcap files correctly.
+
+---
+
+## Usage
+
+### Run the backend analysis from a PCAP file
 
 ```bash
 cd backend
-python3 -m venv venv
-source venv/bin/activate      # Windows : .\venv\Scripts\Activate.ps1
-pip install -r requirements.txt
+python -m app.main samples/test_ids.pcap
 ```
 
-## Utilisation
+This produces a detection result JSON and saves the output in the alerts directory.
 
-### Mode classique (agrégation sur tout le fichier)
+### Run the frontend
 
 ```bash
-python test.py samples/example_capture.pcap
-python test.py samples/example_capture.pcap --top 10
+cd frontend
+npm run dev
 ```
 
-### Nouveau mode : analyse par fenêtre temporelle, groupée par protocole
+Then open the application in the browser and login or use the available dashboard flows.
 
-```bash
-python test.py samples/multi_protocol_test.pcap --windowed
-python test.py samples/example_capture.pcap --windowed --window-seconds 30 --handshake-timeout 5
-```
+---
 
-Options disponibles :
-- `--windowed` : active l'analyse par fenêtre (sinon uniquement le résumé global)
-- `--window-seconds N` : durée de chaque fenêtre en secondes (défaut : 60)
-- `--handshake-timeout N` : délai avant de marquer un handshake TCP comme incomplet (défaut : 5s)
-- `--json-output chemin.json` : chemin du fichier JSON de sortie (défaut : `<capture>.windows.json`)
+## API overview
 
-Ce mode découpe le fichier en fenêtres successives, regroupe les
-paquets de chaque fenêtre par protocole (TCP, UDP, DNS, HTTP, ICMP) et
-écrit un fichier JSON avec cette structure exacte :
+The project exposes several FastAPI services:
 
-```json
-[
-  {
-    "window": {"start_time": "...", "end_time": "...", "duration": 60.0},
-    "protocols": {
-      "TCP": {"flows": [...], "features": {...}},
-      "UDP": {"flows": [...], "features": {...}},
-      "DNS": {"queries": [...], "features": {...}},
-      "HTTP": {"requests": [...], "features": {...}},
-      "ICMP": {"features": {...}}
-    }
-  }
-]
-```
+- API Gateway: main entry point for analysis and dashboard operations
+- Auth Service: login, registration, and token handling
+- Analyzer Service: packet extraction and aggregation
+- Detector Service: rule-based detection
+- Enrichment Service: enrichment for detected events
 
-## Détail des features calculées par protocole
+Main endpoints include:
 
-| Protocole | Features | Détail |
-|---|---|---|
-| **TCP** | `packet_count`, `connection_count`, `syn_count`, `ack_count`, `rst_count`, `unique_dst_ports`, `incomplete_handshakes` | Chaque connexion (`flows`) a un état : `SYN_SENT`, `SYN_RECEIVED`, `ESTABLISHED` ou `RESET` |
-| **UDP** | `packet_count`, `unique_dst_ports` | Flux groupés par `(src_ip, dst_ip, dst_port)` |
-| **DNS** | `query_count`, `unique_domains`, `failed_queries`, `average_domain_length` | Une requête est "échouée" si sa réponse a un `rcode != 0` (ex. NXDOMAIN) |
-| **HTTP** | `request_count`, `post_count`, `error_404`, `unique_urls` | Requêtes et réponses appariées par flux TCP |
-| **ICMP** | `packet_count`, `echo_requests` | `echo_requests` = paquets de type 8 |
+- /login
+- /register
+- /analyses
+- /analyses/{analysis_id}
+- /analyses/{analysis_id}/alerts
 
-## Suivi des handshakes TCP (point 3 de la demande)
+---
 
-Chaque connexion TCP est identifiée par ses deux extrémités
-`(ip, port)`, indépendamment du sens du paquet. L'état suit cette
-logique :
+## Persistent data
 
-1. **SYN_SENT** : premier paquet avec `SYN=1, ACK=0` observé (définit
-   qui est l'initiateur/client)
-2. **SYN_RECEIVED** : réponse `SYN=1, ACK=1` venant du répondeur
-3. **ESTABLISHED** : `ACK=1, SYN=0` venant de l'initiateur
-4. **RESET** : si un `RST=1` est observé à tout moment
+MongoDB is used for storing:
 
-Si une connexion reste en `SYN_SENT` au-delà du timeout configuré
-(5s par défaut) avant la fin de la fenêtre, elle est marquée
-`handshake_incomplete: true` et comptée dans
-`TCP.features.incomplete_handshakes`.
+- user data,
+- authentication records,
+- analysis metadata,
+- alerts,
+- enriched detection results.
 
-**Limite documentée** : le suivi est local à chaque fenêtre. Une
-connexion dont le SYN apparaît juste avant la fin d'une fenêtre peut
-ne pas avoir eu le temps d'atteindre le timeout avant la limite de
-fenêtre — elle reste alors `SYN_SENT` sans être marquée incomplète.
-C'est un compromis volontaire pour garder l'analyse de chaque fenêtre
-indépendante des autres.
+This makes the platform suitable for multi-user monitoring and longer-term reporting.
 
-## Normalisation UTC (point 1 de la demande)
+---
 
-`extractor.py` utilise `packet.sniff_timestamp` (l'epoch Unix brut,
-indépendant du fuseau horaire) plutôt que `packet.sniff_time` (qui
-dépend du fuseau système de la machine qui exécute l'analyse). Tous
-les timestamps de `PacketRecord` sont donc des `datetime` UTC-aware
-dès l'extraction, garantissant un fenêtrage cohérent quelle que soit
-la machine sur laquelle tourne l'analyse.
+## Report-oriented summary
 
-## Vérifié réellement (pas juste écrit)
+This project presents a complete pipeline for network anomaly detection based on packet analysis and intelligent rule evaluation. It demonstrates how network data can be transformed into structured security information and then exposed through a modern interface. The system combines network forensics, protocol analysis, backend services, and visualization, providing a practical foundation for real-world intrusion detection and monitoring systems.
 
-Ce code a été testé sur deux captures synthétiques générées avec
-Scapy, couvrant : un handshake TCP complet, un handshake TCP bloqué
-(jamais de réponse), une requête DNS en échec (NXDOMAIN), une réponse
-HTTP 404, et un paquet ICMP echo request. Les 4 assertions suivantes
-passent :
+---
 
-```python
-protocols["TCP"]["features"]["incomplete_handshakes"] == 1
-protocols["DNS"]["features"]["failed_queries"] == 1
-protocols["HTTP"]["features"]["error_404"] == 1
-protocols["ICMP"]["features"]["echo_requests"] == 1
-```
+## Possible improvements
 
-## Utilisation programmatique
+- integration with live packet capture (real-time monitoring),
+- more advanced machine learning detection models,
+- automatic threat scoring,
+- alert correlation across multiple events,
+- notifications by email or SMS,
+- dashboard analytics with charts and timelines,
+- better role-based access management in the frontend.
 
-```python
-from app.analyzer.extractor import PacketExtractor
-from app.analyzer.aggregator import TrafficAggregator
+---
 
-extractor = PacketExtractor("capture.pcap")
-packets = extractor.extract()
+## Conclusion
 
-aggregator = TrafficAggregator(packets)
-
-# Mode classique (tout le fichier)
-result = aggregator.aggregate()
-
-# Nouveau mode : par fenêtre de 60s, groupé par protocole
-windows = aggregator.aggregate_by_window(window_seconds=60, handshake_timeout_seconds=5.0)
-json_str = TrafficAggregator.windows_to_json(windows)
-```
-
-## Prochaine étape (hors périmètre de cette livraison)
-
-Un moteur de règles pourra consommer directement `WindowResult`/le
-JSON produit pour appliquer des règles spécifiques par protocole
-(ex. : `incomplete_handshakes > seuil` pour un SYN flood, `failed_queries`
-élevé pour du DNS tunneling, etc.), fenêtre par fenêtre plutôt que sur
-tout le fichier d'un coup.
+This project demonstrates a practical and modular approach to anomaly detection in network traffic. It is suitable for academic reporting, proof of concept development, and further extension into a production-ready security monitoring platform.
