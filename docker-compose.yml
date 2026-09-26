@@ -1,18 +1,98 @@
 version: "3.9"
 
 services:
-  mongodb:
+  mongodb-analyses:
     image: mongo:7
-    container_name: mongodb
+    container_name: mongodb-analyses
     restart: unless-stopped
     ports:
       - "27017:27017"
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: admin123
-      MONGO_INITDB_DATABASE: mydb
+      MONGO_INITDB_DATABASE: analysesdb
     volumes:
-      - mongo_data:/data/db
+      - analyses_mongo_data:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+  mongodb-auth:
+    image: mongo:7
+    container_name: mongodb-auth
+    restart: unless-stopped
+    ports:
+      - "27018:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin123
+      MONGO_INITDB_DATABASE: authdb
+    volumes:
+      - auth_mongo_data:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+  mongodb-analyzer:
+    image: mongo:7
+    container_name: mongodb-analyzer
+    restart: unless-stopped
+    ports:
+      - "27019:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin123
+      MONGO_INITDB_DATABASE: analyzerdb
+    volumes:
+      - analyzer_mongo_data:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+  mongodb-detector:
+    image: mongo:7
+    container_name: mongodb-detector
+    restart: unless-stopped
+    ports:
+      - "27020:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin123
+      MONGO_INITDB_DATABASE: detectordb
+    volumes:
+      - detector_mongo_data:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+  mongodb-enrichment:
+    image: mongo:7
+    container_name: mongodb-enrichment
+    restart: unless-stopped
+    ports:
+      - "27021:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin123
+      MONGO_INITDB_DATABASE: enrichmentdb
+    volumes:
+      - enrichment_mongo_data:/data/db
     healthcheck:
       test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
       interval: 5s
@@ -30,8 +110,9 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - MONGO_URI=mongodb://admin:admin123@mongodb:27017/mydb?authSource=admin
-      - MONGODB_URI_ANALYSES=mongodb://admin:admin123@mongodb:27017/mydb?authSource=admin
+      - MONGO_URI=mongodb://admin:admin123@mongodb-analyses:27017/analysesdb?authSource=admin
+      - MONGODB_URI_ANALYSES=mongodb://admin:admin123@mongodb-analyses:27017/analysesdb?authSource=admin
+      - MONGODB_DB_NAME=analysesdb
       - ANALYZER_URL=http://analyzer-service:8001
       - ENRICHMENT_URL=http://enrichment-service:8003
       - DETECTOR_URL=http://detector-service:8002
@@ -40,7 +121,7 @@ services:
     env_file:
       - ./backend/.env
     depends_on:
-      mongodb:
+      mongodb-analyses:
         condition: service_healthy
       analyzer-service:
         condition: service_started
@@ -62,8 +143,13 @@ services:
     ports:
       - "8001:8001"
     environment:
+      - MONGODB_URI_ANALYZER=mongodb://admin:admin123@mongodb-analyzer:27017/analyzerdb?authSource=admin
+      - MONGODB_DB_ANALYZER=analyzerdb
       - PYTHONDONTWRITEBYTECODE=1
       - PYTHONUNBUFFERED=1
+    depends_on:
+      mongodb-analyzer:
+        condition: service_healthy
     volumes:
       - ./backend:/app
     networks:
@@ -78,8 +164,13 @@ services:
     ports:
       - "8002:8002"
     environment:
+      - MONGODB_URI_DETECTOR=mongodb://admin:admin123@mongodb-detector:27017/detectordb?authSource=admin
+      - MONGODB_DB_DETECTOR=detectordb
       - PYTHONDONTWRITEBYTECODE=1
       - PYTHONUNBUFFERED=1
+    depends_on:
+      mongodb-detector:
+        condition: service_healthy
     volumes:
       - ./backend:/app
     networks:
@@ -94,8 +185,13 @@ services:
     ports:
       - "8003:8003"
     environment:
+      - MONGODB_URI_ENRICHMENT=mongodb://admin:admin123@mongodb-enrichment:27017/enrichmentdb?authSource=admin
+      - MONGODB_DB_ENRICHMENT=enrichmentdb
       - PYTHONDONTWRITEBYTECODE=1
       - PYTHONUNBUFFERED=1
+    depends_on:
+      mongodb-enrichment:
+        condition: service_healthy
     volumes:
       - ./backend:/app
     networks:
@@ -110,14 +206,15 @@ services:
     ports:
       - "8004:8004"
     environment:
-      - MONGO_URI=mongodb://admin:admin123@mongodb:27017/mydb?authSource=admin
-      - MONGODB_URI_AUTH=mongodb://admin:admin123@mongodb:27017/mydb?authSource=admin
+      - MONGO_URI=mongodb://admin:admin123@mongodb-auth:27017/authdb?authSource=admin
+      - MONGODB_URI_AUTH=mongodb://admin:admin123@mongodb-auth:27017/authdb?authSource=admin
+      - MONGODB_DB_AUTH=authdb
       - PYTHONDONTWRITEBYTECODE=1
       - PYTHONUNBUFFERED=1
     env_file:
       - ./backend/.env
     depends_on:
-      mongodb:
+      mongodb-auth:
         condition: service_healthy
     volumes:
       - ./backend:/app
@@ -145,4 +242,8 @@ networks:
     driver: bridge
 
 volumes:
-  mongo_data:
+  analyses_mongo_data:
+  auth_mongo_data:
+  analyzer_mongo_data:
+  detector_mongo_data:
+  enrichment_mongo_data:
