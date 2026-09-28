@@ -733,3 +733,112 @@ jobs:
           format: table
           severity: CRITICAL,HIGH
           exit-code: "0"
+
+
+  # ==========================================================
+  # JOB 12 : Sécurité - DAST avec OWASP ZAP
+  # ==========================================================
+  # Scan dynamique de l'application en cours d'exécution :
+  # - Frontend : zap-baseline (scan passif + AJAX spider pour la SPA)
+  # - API      : zap-api-scan à partir de la spec OpenAPI (FastAPI)
+  # Mode "rapport" (-I) : les avertissements ne bloquent pas le pipeline.
+  # ==========================================================
+
+  security-dast:
+    name: Sécurité - DAST (OWASP ZAP)
+    runs-on: ubuntu-latest
+
+    needs:
+      - docker-build
+
+    steps:
+
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+
+      - name: Démarrer la stack
+        run: |
+          docker compose up -d --build
+
+
+      - name: Attendre le démarrage des services
+        run: |
+          sleep 20
+
+
+      - name: Vérifier API Gateway
+        run: |
+          curl --fail --retry 5 --retry-delay 3 \
+            http://localhost:8000/health
+
+      - name: Vérifier la spécification OpenAPI
+        run: |
+          curl --fail --retry 5 --retry-delay 3 \
+            http://localhost:8000/openapi.json > /dev/null
+
+      - name: Vérifier Frontend
+        run: |
+          curl --fail --retry 5 --retry-delay 3 \
+            http://localhost:3000
+
+
+      # Le conteneur ZAP tourne avec l'utilisateur "zap" (uid 1000)
+      # alors que le workspace appartient à "runner" (uid 1001) :
+      # sans ce chmod, ZAP ne peut pas écrire les rapports.
+      - name: Autoriser l'écriture des rapports ZAP
+        run: |
+          chmod -R a+w "${{ github.workspace }}"
+
+
+      - name: DAST - OWASP ZAP Frontend
+        run: |
+          docker run --rm \
+            --network host \
+            -v "${{ github.workspace }}:/zap/wrk/:rw" \
+            ghcr.io/zaproxy/zaproxy:stable \
+            zap-baseline.py \
+            -t http://localhost:3000 \
+            -j \
+            -r zap-frontend-report.html \
+            -J zap-frontend-report.json \
+            -I
+
+
+      - name: DAST - OWASP ZAP API
+        run: |
+          docker run --rm \
+            --network host \
+            -v "${{ github.workspace }}:/zap/wrk/:rw" \
+            ghcr.io/zaproxy/zaproxy:stable \
+            zap-api-scan.py \
+            -t http://localhost:8000/openapi.json \
+            -f openapi \
+            -r zap-api-report.html \
+            -J zap-api-report.json \
+            -I
+
+
+      - name: Publier les rapports DAST
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: zap-dast-reports
+          path: |
+            zap-frontend-report.html
+            zap-frontend-report.json
+            zap-api-report.html
+            zap-api-report.json
+          if-no-files-found: warn
+          retention-days: 30
+
+
+      - name: Logs en cas d'échec
+        if: failure()
+        run: docker compose logs
+
+
+      - name: Arrêter la stack
+        if: always()
+        run: |
+          docker compose down -v

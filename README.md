@@ -1,6 +1,6 @@
 # Network Anomaly Detection Platform
 
-This project is a full-stack network traffic analysis and anomaly detection system designed to detect suspicious communication patterns from PCAP files and present the results through a web interface. It combines packet extraction, protocol-based aggregation, rule-based detection, alert generation, authentication, and a dashboard for monitoring security events.
+This project is a full-stack network traffic analysis and anomaly detection solution designed to detect suspicious communication patterns from PCAP and PCAPNG files and present the results through a web interface. It combines packet extraction, protocol-based aggregation, rule-based detection, alert generation, authentication, and dashboard monitoring in a modular architecture.
 
 ## Project objective
 
@@ -14,7 +14,7 @@ The main objective of this project is to build an intelligent monitoring system 
 - exposing the system through a web application and REST API,
 - allowing authenticated users to manage and consult analyses.
 
-This system is relevant for network monitoring, intrusion detection, and cybersecurity analysis in a modern and modular architecture.
+This system is relevant for network monitoring, intrusion detection, and cybersecurity analysis in a modern, modular, and service-oriented architecture.
 
 ---
 
@@ -33,30 +33,61 @@ This system is relevant for network monitoring, intrusion detection, and cyberse
 
 ---
 
-## System architecture
+## Architecture of the project
+
+### Functional architecture
 
 ```mermaid
 flowchart LR
-    User[User] --> Frontend[Frontend React App]
-    Frontend --> API[API Gateway / FastAPI]
-    API --> Analyzer[Analyzer Service]
-    API --> Detector[Detector Service]
-    API --> Auth[Auth Service]
-    API --> Mongo[(MongoDB)]
+    User[User] --> Frontend[Frontend React / Vite]
+    Frontend --> Gateway[API Gateway FastAPI]
+    Gateway --> Analyzer[Analyzer Service]
+    Gateway --> Enrichment[Enrichment Service]
+    Gateway --> Detector[Detector Service]
+    Gateway --> Auth[Auth Service]
+
     Analyzer --> PCAP[PCAP / PCAPNG Files]
-    Detector --> Alerts[Alerts & Detection Results]
-    Enrichment[Enrichment Service] --> API
+    Detector --> Alerts[Alerts and Results]
+    Gateway --> MongoAnalyses[(MongoDB Analyses)]
+    Auth --> MongoAuth[(MongoDB Auth)]
+    Analyzer --> MongoAnalyzer[(MongoDB Analyzer)]
+    Detector --> MongoDetector[(MongoDB Detector)]
+    Enrichment --> MongoEnrichment[(MongoDB Enrichment)]
 ```
 
-The architecture is modular and based on independent services:
+### Real architecture overview
 
-- Analyzer: packet parsing and extraction
-- Detector: anomaly detection rules
-- Enrichment: data enrichment and contextualization
-- API Gateway: central access layer
-- Auth Service: user authentication and authorization
-- Frontend: web interface for users
-- MongoDB: persistent storage for results and profiles
+The project is built with a modular, service-oriented architecture in which each layer has a distinct responsibility:
+
+- Frontend: user-facing web interface in React
+- API Gateway: central access point for analysis requests and inter-service orchestration
+- Analyzer Service: packet extraction, data normalization, and aggregation
+- Enrichment Service: contextual enrichment before detection
+- Detector Service: anomaly rules and alert generation
+- Auth Service: authentication, users, and access control
+- Databases: MongoDB is used across the platform, with separate database instances configured per service in Docker
+
+### Data persistence and service separation
+
+The Docker configuration explicitly separates the MongoDB instances by service:
+
+- Analyses database: stores analysis results and alert metadata
+- Authentication database: stores users, credentials, and auth data
+- Analyzer database: dedicated to analysis processing data
+- Detector database: dedicated to detection results
+- Enrichment database: dedicated to enriched context data
+
+This separation reduces coupling, isolates responsibilities, and makes the solution closer to a microservices-based design.
+
+### Processing flow
+
+1. The user uploads a PCAP file from the frontend.
+2. The API Gateway receives the file and routes it to the relevant services.
+3. The Analyzer extracts packets and computes traffic statistics.
+4. The Enrichment layer adds contextual information to the traffic data.
+5. The Detector applies anomaly detection rules and generates alerts.
+6. Results are saved in MongoDB.
+7. The frontend fetches the results and displays them in the dashboard.
 
 ---
 
